@@ -1,0 +1,195 @@
+extend type Query {
+  "Get all policy fragments"
+  policyFragments : [PolicyFragment!]!
+  "Get policy fragment by name"
+  policyFragmentByName(name: String!) : PolicyFragment
+  "Get policy fragments inside a folder"
+  policyFragmentsByFolderPath(folderPath: String!) : [PolicyFragment!]!
+  "Get policy fragment by goid"
+  policyFragmentByGoid(goid: ID!) : PolicyFragment
+  "Get policy fragment by guid"
+  policyFragmentByGuid(guid: ID!) : PolicyFragment
+  "Get all global policies"
+  globalPolicies : [GlobalPolicy!]!
+  "Get global policy by tag"
+  globalPolicyByTag(tag: String!) : GlobalPolicy
+  "Get global policies inside a folder"
+  globalPoliciesByFolderPath(folderPath: String!) : [GlobalPolicy!]!
+}
+
+extend type Mutation {
+  "Create or update policy fragments"
+  setPolicyFragments(input: [PolicyFragmentInput!]!) : PolicyFragmentsPayload!
+  "Delete policy fragments"
+  deletePolicyFragments(names: [String!]!) : PolicyFragmentsPayload!
+  "Create or update global policies"
+  setGlobalPolicies(input: [GlobalPolicyInput!]!) : GlobalPoliciesPayload!
+  "Delete global policies"
+  deleteGlobalPolicies(tags: [String!]!) : GlobalPoliciesPayload!
+}
+
+"""
+A Global policy
+"""
+type GlobalPolicy {
+    "The name of the policy (policies are unique by name)"
+    name: String!
+    "The folder path where this policy is located"
+    folderPath: String!
+    "The goid for this policy"
+    goid : ID!
+    "The guid for this policy"
+    guid : ID!
+    """
+    Global policy tag. Possible values are :
+      message-completed
+      message-received
+      post-security
+      post-service
+      pre-security
+      pre-service
+    """
+    tag: String!
+    "The actual policy and dependencies"
+    policy: Policy!
+    "The configuration checksum"
+    checksum: String!
+}
+
+ """
+ A policy fragment that can be included in another policy
+ """
+ type PolicyFragment {
+   "The goid for this policy"
+   goid : ID!
+   "The guid for this policy"
+   guid : ID!
+   "The name of the policy (policies are unique by name)"
+   name: String!
+   "The folder path to the policy"
+   folderPath: String!
+   "The actual policy and dependencies"
+   policy: Policy!
+   soap: Boolean
+   "The configuration checksum"
+   checksum: String!
+ }
+
+ """
+ Wrapper for the policy XML and the dependencies they include
+ """
+ type Policy {
+   "The policy XML"
+   xml: String!
+   "Entities that are directly referred to inside the policy XML"
+   directDependencies: PolicyDependency
+   "Entities that are directly referred to inside the policy XML in addition to ones in policy dependencies. More than second level, this keep going as deep as needed until no dependencies are found"
+   allDependencies: PolicyDependency
+ }
+
+ """
+ Policy Dependency contains all dependencies that may be referred to from the policy XML this is associated with
+ """
+ type PolicyDependency {
+   "Policy Fragments"
+   policyFragments : [PolicyFragment]
+   "Cluster properties"
+   clusterProperties : [ClusterProperty]
+   "Trusted certificates"
+   trustedCerts : [Certificate]
+   "Encass Configs"
+   encassConfigs : [EncassConfig]
+   "JDBC connections"
+   jdbcConnections: [JdbcConnection]
+   "Cassandra connections"
+   cassandraConnections: [CassandraConnection]
+   "JMS destinations"
+   jmsDestinations: [JmsDestination]
+   "Schemas in global resources"
+   schemas: [Schema]
+   "DTDs in global resources"
+   dtds: [Dtd]
+   "Federated identity provider configurations"
+   fips : [Fip]
+   "Ldap identity provider configurations"
+   ldaps : [Ldap]
+   "Internal idp users"
+   internalUsers : [InternalUser]
+   "Internal idp groups"
+   internalGroups : [InternalGroup]
+   "Federated identity provider users"
+   fipUsers : [FipUser]
+   "Federated identity provider groups"
+   fipGroups : [FipGroup]
+   secrets : [Secret]
+   keys : [Key]
+   "Server module files (signed modular or custom assertions)"
+   serverModuleFiles: [ServerModuleFile]
+   "Email Listeners"
+   emailListeners: [EmailListener]
+   "Listen Ports"
+   listenPorts: [ListenPort]
+   "Active Connectors (SFTP, MQ Native, Kafka)"
+   activeConnectors: [ActiveConnector]
+   "Siteminder Configurations"
+   smConfigs: [SMConfig]
+ }
+
+ input PolicyInput {
+   "The policy xml"
+   xml: String!
+ }
+
+ input PolicyFragmentInput {
+   "The internal entity unique identifier"
+   goid: ID
+   "The folder path where to create this policy.  If the path does not exist, it will be created"
+   folderPath: String!
+   "The name of the policy. Policies are unique by name."
+   name: String!
+   "The guid for this service, if none provided, assigned at creation"
+   guid : ID
+   "The policy"
+   policy: PolicyInput!
+   soap: Boolean = false
+   "Ignored at creation time but can be used to compare bundle with gw state"
+   checksum : String
+ }
+
+input GlobalPolicyInput {
+    "The name of the policy. Policies are unique by name."
+    name: String!
+    "The folder path where to create this policy.  If the path does not exist, it will be created"
+    folderPath: String!
+    "The goid for this policy"
+    goid : ID
+    "The guid for this service, if none provided, assigned at creation"
+    guid : ID
+    """
+    Global policy tag. Possible values are :
+      message-completed
+      message-received
+      post-security
+      post-service
+      pre-security
+      pre-service
+    """
+    tag: String!
+    "The policy"
+    policy: PolicyInput!
+    soap: Boolean = false
+    "Ignored at creation time but can be used to compare bundle with gw state"
+    checksum : String
+}
+
+ type PolicyFragmentsPayload implements EntityMutationsPayload {
+   status: [EntityMutationStatus!]!
+   detailedStatus: [EntityMutationDetailedStatus!]!
+   policyFragments: [PolicyFragment]!
+ }
+
+type GlobalPoliciesPayload implements EntityMutationsPayload {
+    status: [EntityMutationStatus!]!
+    detailedStatus: [EntityMutationDetailedStatus!]!
+    globalPolicies: [GlobalPolicy]!
+}

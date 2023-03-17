@@ -1,0 +1,4 @@
+{
+  "query": "{{everything.gql}}",
+  "variables": {}
+}

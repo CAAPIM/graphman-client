@@ -1,0 +1,152 @@
+extend type Query {
+    "Get all JMS Destinations"
+    jmsDestinations : [JmsDestination!]!
+    "Get JMS Destination by name"
+    jmsDestinationByName(name: String!) : JmsDestination
+    "Get JMS Destination by goid"
+    jmsDestinationByGoid(goid: ID!) : JmsDestination
+}
+
+extend type Mutation {
+    """
+    Create or update JMS destinations.
+    If JMS destination with the same name exist, the JMS destination will be updated.
+    If no JMS destination with the name exist, a new JMS destination will be created.
+    """
+    setJmsDestinations(input: [JmsDestinationInput!]!): JmsDestinationsPayload!
+
+    """
+    Deletes JMS destinations.
+    """
+    deleteJmsDestinations(
+        "The names of the JMS destination to delete"
+        names: [String!]!): JmsDestinationsPayload
+}
+
+"A JMS Destination"
+type JmsDestination {
+    "The goid for the JMS Destination"
+    goid : ID!
+    "The goid for the JMS Connection"
+    connectionGoid : ID!
+    "The JMS Destination name"
+    name : String!
+    "The JMS Destination direction (inbound or outbound)"
+    direction: String!
+    "The JMS provider type"
+    providerType : String!
+
+    "The initial context factory class name"
+    initialContextFactoryClassname: String!
+    "The connection factory name"
+    connectionFactoryName: String!
+    "The JNDI URL"
+    jndiUrl: String!
+    "The JNDI username"
+    jndiUsername: String
+    "The JNDI password"
+    jndiPassword: String
+
+    "The JNDI SSL details"
+    jndiSslDetails: JmsSslDetails!
+
+    "The destination type"
+    destinationType: String!
+    "The destination name"
+    destinationName: String!
+    "The username for destination connection"
+    destinationUsername: String
+    "The password for destination connection"
+    destinationPassword: String
+
+    "The destination SSL details"
+    destinationSslDetails: JmsSslDetails!
+
+    "Whether this JMS destination is template"
+    template: Boolean!
+    "Whether this JMS destination is enabled"
+    enabled: Boolean!
+
+    "The remaining JMS Destination properties that include inbound options or outbound options or additional properties"
+    properties: [EntityProperty!]
+
+    "The configuration checksum of this JMS destination"
+    checksum: String!
+}
+
+"A JMS SSL Details"
+type JmsSslDetails {
+    "Whether SSL is enabled"
+    sslEnabled: Boolean!
+    "Whether SSL is used for Authentication only"
+    sslForAuthenticationOnly: Boolean!
+    "Whether SSL Server Certificate is to be verified"
+    sslVerifyServerCertificate: Boolean!
+    "Whether SSL Server Hostname is to be verified"
+    sslVerifyServerHostname: Boolean!
+    "Private Key Alias for SSL Client Authentication"
+    sslClientKeyAlias: String
+}
+
+input JmsDestinationInput {
+    "The internal entity unique identifier"
+    goid: ID
+    connectionGoid: ID
+    "The JMS Destination name"
+    name : String!
+    "The JMS Destination direction (inbound or outbound)"
+    direction: String!
+    "The JMS provider type"
+    providerType : String!
+    "The initial context factory class name"
+    initialContextFactoryClassname: String!
+    "The connection factory name"
+    connectionFactoryName: String!
+    "The JNDI URL"
+    jndiUrl: String!
+    "The JNDI username"
+    jndiUsername: String
+    "The JNDI password"
+    jndiPassword: String
+    "The JNDI SSL details"
+    jndiSslDetails: JmsSslDetailsInput
+    "The destination type"
+    destinationType: String!
+    "The destination name"
+    destinationName: String!
+    "The username for destination connection"
+    destinationUsername: String
+    "The password for destination connection"
+    destinationPassword: String
+    "The destination SSL details"
+    destinationSslDetails: JmsSslDetailsInput
+    "Whether this JMS destination is template"
+    template: Boolean!
+    "Whether this JMS destination is enabled"
+    enabled: Boolean!
+    "The remaining JMS Destination properties that include inbound options or outbound options or additional properties"
+    properties: [EntityPropertyInput!]
+    "Ignored at creation time but can be used to compare bundle with gw state"
+    checksum : String
+}
+
+input JmsSslDetailsInput {
+    "Whether SSL is enabled"
+    sslEnabled: Boolean!
+    "Whether SSL is used for Authentication only"
+    sslForAuthenticationOnly: Boolean!
+    "Whether SSL Server Certificate is to be verified"
+    sslVerifyServerCertificate: Boolean!
+    "Whether SSL Server Hostname is to be verified"
+    sslVerifyServerHostname: Boolean!
+    "Private Key Alias for SSL Client Authentication"
+    sslClientKeyAlias: String
+}
+
+type JmsDestinationsPayload implements EntityMutationsPayload {
+    status: [EntityMutationStatus!]!
+    detailedStatus: [EntityMutationDetailedStatus!]!
+    "The created/updated JMS destinations."
+    jmsDestinations: [JmsDestination]!
+}
+
