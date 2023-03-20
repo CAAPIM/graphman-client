@@ -72,13 +72,13 @@ query all {
 	    {{SMConfig}}
 	}
     emailListeners {
-        {{EmailListener}}
+        {{EmailListener:-hardwiredService}}
     }
     listenPorts {
-        {{ListenPort}}
+        {{ListenPort:-hardwiredService}}
     }
     activeConnectors {
-	    {{ActiveConnector}}
+	    {{ActiveConnector:-hardwiredService}}
 	}
     scheduledTasks {
         {{ScheduledTask}}
