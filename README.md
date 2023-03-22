@@ -44,7 +44,7 @@ example:
     "username": "admin",
     "password": "7layer",
     "rejectUnauthorized": false,
-    "encpass": "7layer"
+    "passphrase": "7layer"
   },
 
   "targetGateway": {
@@ -52,7 +52,7 @@ example:
     "username": "admin",
     "password": "7layer",
     "rejectUnauthorized": false,
-    "encpass": "7layer"
+    "passphrase": "7layer"
   }
 }
 ```
@@ -280,7 +280,7 @@ Of all the entity types, two of them contain sensitive information which is neve
 - Secrets (Secure Passwords and SSH keys)
 
 A encryption passphrase provided by the graphman requester is used to encrypt and decrype these secrets. This
-encryption passphrase is set with HTTP header name `encpass`. If missing, graphman will use its local master
+encryption passphrase is set with HTTP header name `l7-passphrase`. If missing, graphman will use its local master
 passphrase to encrypt/decrypt these secrets. When using the utils .sh scripts provided, the encryption passphrase
 is read from the local target.properties.
 

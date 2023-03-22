@@ -4,7 +4,7 @@
     "username": "admin",
     "password": "7layer",
     "rejectUnauthorized": false,
-    "encpass": "7layer"
+    "passphrase": "7layer"
   },
 
   "targetGateway": {
@@ -12,6 +12,6 @@
     "username": "admin",
     "password": "7layer",
     "rejectUnauthorized": false,
-    "encpass": "7layer"
+    "passphrase": "7layer"
   }
 }

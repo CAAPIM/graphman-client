@@ -31,8 +31,8 @@ module.exports = {
             'content-type': 'application/json; charset=utf-8'
         };
 
-        if (gateway.encpass) {
-            headers.encpass = gateway.encpass;
+        if (gateway.passphrase) {
+            headers['l7-passphrase'] = gateway.passphrase;
         }
 
         const req = {
@@ -106,6 +106,7 @@ module.exports = {
 
 function maskedHttpRequest(options) {
     if (options.auth) options.auth = "***";
+    if (options.headers['l7-passphrase']) options.headers['l7-passphrase'] = "***";
     if (options.headers.encpass) options.headers.encpass = "***";
     return options;
 }
