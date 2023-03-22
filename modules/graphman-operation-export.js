@@ -7,11 +7,6 @@ const POST_BUNDLE_EXTN = utils.extension("graphman-post-bundle");
 module.exports = {
     run: function (params) {
         const queryBuilder = require("./graphql-query-builder");
-
-        if (!params.using) {
-            throw "Missing --using argument";
-        }
-
         const config = graphman.configuration(params);
 
         if (!config.sourceGateway) {
@@ -23,7 +18,7 @@ module.exports = {
         let startDate = Date.now();
         this.export(
             config.sourceGateway,
-            queryBuilder.build(params.using, params.variables),
+            queryBuilder.build(params.using ? params.using : 'all', params.variables),
             (data, parts) => {
                 let endDate = Date.now();
 
@@ -58,7 +53,7 @@ module.exports = {
 
     usage: function () {
         console.log("    export --using <query-id> [--variables.<name> <value>,...] [--filter.by <entity-field-name> --filter.<matching-criteria> <value>,...] [--output <output-file>] [<options>]");
-        console.log("        # use <entity-type-plural-tag> as query-id for listing the entities");
+        console.log("        # use <entity-type-plural-tag> as query-id for listing the entities. If not specified, it will be defaulted to all.");
         console.log("      --filter.by");
         console.log("        # use this option to filter the exported entities by some field.");
         console.log("      --filter.equals|startsWith|endsWith|contains");

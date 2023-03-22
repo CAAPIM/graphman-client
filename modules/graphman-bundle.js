@@ -10,6 +10,8 @@ module.exports = {
         policyFragments: 'policy',
         webApiServices: 'webapi',
         soapServices: 'soap',
+        internalWebApiServices: 'internal-webapi',
+        internalSoapServices: 'internal-soap',
         globalPolicies: 'global',
         backgroundTaskPolicies: 'bgpolicy'
     },
@@ -265,9 +267,8 @@ let importSanitizer = function () {
     function sanitizeEntity(entity, pluralMethod, goidRequired) {
         if (!goidRequired) delete entity.goid;
 
-        if (pluralMethod === "webApiServices" || pluralMethod === "soapServices") {
+        if (pluralMethod === "webApiServices" || pluralMethod === "soapServices" || pluralMethod === "internalWebApiServices" || pluralMethod === "internalSoapServices") {
             if (entity.resolvers && !entity.resolutionPath) entity.resolutionPath = entity.resolvers.resolutionPath;
-
             if (entity.guid || entity.resolvers) {
                 utils.info(`removing guid|resolvers field(s) from service ${entity.name}/${entity.resolutionPath}`);
                 delete entity.guid;
