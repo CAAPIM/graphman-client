@@ -51,7 +51,7 @@ type EmailListener {
     "The published service hardwired to the email listener"
     hardwiredService: HardwiredService
     "Permitted maximum size of the message"
-    sizeLimit: PositiveInt
+    sizeLimit: NonNegativeInt
     "The email listener properties excluding sizeLimit and HardwiredServiceName"
     properties: [EntityProperty!]
     "The configuration checksum"
@@ -86,7 +86,7 @@ input EmailListenerInput {
     "The name of the published service hardwired to the email listener"
     hardwiredServiceName: String
     "Permitted maximum size of the message"
-    sizeLimit: PositiveInt
+    sizeLimit: NonNegativeInt
     "[Optional] The Email listener Properties excluding sizeLimit and HardwiredServiceName. When specified, will replace existing properties"
     properties: [EntityPropertyInput!]
     "Ignored at creation time but can be used to compare bundle with gw state"

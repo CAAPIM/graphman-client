@@ -138,7 +138,7 @@ input FipUserInput {
     firstName : String
     lastName : String
     email : String
-    checksum : String!
+    checksum : String
 }
 
 input FipGroupInput {
@@ -231,7 +231,7 @@ input FipInput {
 input LdapInput {
     name : String!
     "Will try to match goid if provided"
-    goid : ID!
+    goid : ID
     ldapUrls : [String!]!
     "Whether or not the gateway presents a client cert when connecting at those ldap urls (only relevant when ldaps url)"
     ldapsClientAuthEnabled : Boolean!
@@ -246,7 +246,7 @@ input LdapInput {
     userMappings : [UserMappingInput!]!
     groupMappings : [GroupMappingInput!]!
     "The optional checksum is ignored during the mutation but can be used to compare bundle content"
-    checksum : String!
+    checksum : String
 }
 
 input FipCertInput {

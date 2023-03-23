@@ -1,8 +1,18 @@
 extend type Query {
     "Get all JMS Destinations"
     jmsDestinations : [JmsDestination!]!
-    "Get JMS Destination by name"
+    """
+    Get JMS Destination by name.
+    Here, name can be fully qualified to select JMS destination uniquely.
+    Fully qualified name can be composed as: <JMS DIRECTION>.<JMS PROVIDER TYPE>.<NAME>
+    """
     jmsDestinationByName(name: String!) : JmsDestination
+    """
+    Get JMS Destinations by name.
+    Here, name can be fully qualified to select JMS destinations accurately.
+    Fully qualified name can be composed as: <JMS DIRECTION>.<JMS PROVIDER TYPE>.<NAME>
+    """
+    jmsDestinationsByName(name: String!) : [JmsDestination!]!
     "Get JMS Destination by goid"
     jmsDestinationByGoid(goid: ID!) : JmsDestination
 }
@@ -10,16 +20,15 @@ extend type Query {
 extend type Mutation {
     """
     Create or update JMS destinations.
-    If JMS destination with the same name exist, the JMS destination will be updated.
-    If no JMS destination with the name exist, a new JMS destination will be created.
+    If JMS destination exists, the JMS destination will be updated.
+    If no JMS destination with given name, direction, providerType exist, a new JMS destination will be created.
     """
     setJmsDestinations(input: [JmsDestinationInput!]!): JmsDestinationsPayload!
 
     """
-    Deletes JMS destinations.
+    Deletes JMS destinations. Use simple name or fully qualified name of JMS destinations to delete.
     """
     deleteJmsDestinations(
-        "The names of the JMS destination to delete"
         names: [String!]!): JmsDestinationsPayload
 }
 
@@ -31,9 +40,9 @@ type JmsDestination {
     connectionGoid : ID!
     "The JMS Destination name"
     name : String!
-    "The JMS Destination direction (inbound or outbound)"
+    "The JMS Destination direction (INBOUND or OUTBOUND)"
     direction: String!
-    "The JMS provider type"
+    "The JMS provider type (GENERIC JMS or TIBCO EMS or WEBSPHERE MQ OVER LDAP or WEBLOGIC JMS"
     providerType : String!
 
     "The initial context factory class name"
