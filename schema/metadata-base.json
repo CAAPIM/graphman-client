@@ -1,10 +1,29 @@
 {
   "types": {
+    "ActiveConnector": {
+      "pluralMethod": "activeConnectors",
+      "singularMethod": "activeConnectorByName",
+      "idField": "name",
+      "prefix": "activeConnector"
+    },
+    "BackgroundTaskPolicy": {
+      "pluralMethod": "backgroundTaskPolicies",
+      "singularMethod": "backgroundTaskPolicyByName",
+      "idField": "name",
+      "prefix": "backgroundTaskPolic"
+    },
     "CassandraConnection": {
       "pluralMethod": "cassandraConnections",
       "singularMethod": "cassandraConnectionByName",
       "idField": "name",
       "prefix": "cassandraConnection"
+    },
+    "Certificate": {
+      "pluralMethod": "trustedCerts",
+      "singularMethod": "trustedCertByThumbprint",
+      "idField": "thumbprintSha1",
+      "idFields": ["name", "subjectDn", "thumbprintSha1"],
+      "prefix": "trustedCert"
     },
     "ClusterProperty": {
       "pluralMethod": "clusterProperties",
@@ -12,35 +31,29 @@
       "idField": "name",
       "prefix": "clusterPropert"
     },
-    "EncassConfig": {
-      "pluralMethod": "encassConfigs",
-      "singularMethod": "encassConfigByName",
-      "idField": "name",
-      "prefix": "encassConfig"
-    },
-    "Schema": {
-      "pluralMethod": "schemas",
-      "singularMethod": "schemaBySystemId",
-      "idField": "systemId",
-      "prefix": "schema"
-    },
     "Dtd": {
       "pluralMethod": "dtds",
       "singularMethod": "dtdBySystemId",
       "idField": "systemId",
       "prefix": "dtd"
     },
-    "InternalGroup": {
-      "pluralMethod": "internalGroups",
-      "singularMethod": "internalGroupByName",
+    "EmailListener": {
+      "pluralMethod": "emailListeners",
+      "singularMethod": "emailListenerByName",
       "idField": "name",
-      "prefix": "internalGroup"
+      "prefix": "emailListener"
     },
-    "InternalUser": {
-      "pluralMethod": "internalUsers",
-      "singularMethod": "internalUserByLogin",
-      "idField": "login",
-      "prefix": "internalUser"
+    "EncassConfig": {
+      "pluralMethod": "encassConfigs",
+      "singularMethod": "encassConfigByName",
+      "idField": "name",
+      "prefix": "encassConfig"
+    },
+    "Fip": {
+      "pluralMethod": "fips",
+      "singularMethod": "fipByName",
+      "idField": "name",
+      "prefix": "fip"
     },
     "FipGroup": {
       "pluralMethod": "fipGroups",
@@ -62,17 +75,38 @@
       ],
       "prefix": "fipUser"
     },
-    "Fip": {
-      "pluralMethod": "fips",
-      "singularMethod": "fipByName",
-      "idField": "name",
-      "prefix": "fip"
+    "GlobalPolicy": {
+      "pluralMethod": "globalPolicies",
+      "singularMethod": "globalPolicyByTag",
+      "idField": "tag",
+      "idFields": ["name", "tag"],
+      "prefix": "globalPolic"
     },
-    "Ldap": {
-      "pluralMethod": "ldaps",
-      "singularMethod": "ldapByName",
+    "InternalGroup": {
+      "pluralMethod": "internalGroups",
+      "singularMethod": "internalGroupByName",
       "idField": "name",
-      "prefix": "ldap"
+      "prefix": "internalGroup"
+    },
+    "InternalSoapService": {
+      "pluralMethod": "internalSoapServices",
+      "singularMethod": "internalSoapServiceByResolutionPath",
+      "idField": "resolutionPath",
+      "prefix": "internalSoapService"
+    },
+    "InternalUser": {
+      "pluralMethod": "internalUsers",
+      "singularMethod": "internalUserByLogin",
+      "idField": "login",
+      "idFields": ["name", "login"],
+      "prefix": "internalUser"
+    },
+    "InternalWebApiService": {
+      "pluralMethod": "internalWebApiServices",
+      "singularMethod": "internalWebApiServiceByResolutionPath",
+      "idField": "resolutionPath",
+      "idFields": ["name", "resolutionPath"],
+      "prefix": "internalWebApiService"
     },
     "JdbcConnection": {
       "pluralMethod": "jdbcConnections",
@@ -84,13 +118,21 @@
       "pluralMethod": "jmsDestinations",
       "singularMethod": "jmsDestinationByName",
       "idField": "name",
+      "idFields": ["connectionGoid", "name", "direction", "providerType"],
       "prefix": "jmsDestination"
     },
-    "EmailListener": {
-      "pluralMethod": "emailListeners",
-      "singularMethod": "emailListenerByName",
+    "Key": {
+      "pluralMethod": "keys",
+      "singularMethod": "keyByAlias",
+      "idField": "alias",
+      "idFields": ["keystoreId", "alias"],
+      "prefix": "key"
+    },
+    "Ldap": {
+      "pluralMethod": "ldaps",
+      "singularMethod": "ldapByName",
       "idField": "name",
-      "prefix": "emailListener"
+      "prefix": "ldap"
     },
     "ListenPort": {
       "pluralMethod": "listenPorts",
@@ -98,11 +140,17 @@
       "idField": "name",
       "prefix": "listenPort"
     },
-    "ActiveConnector": {
-      "pluralMethod": "activeConnectors",
-      "singularMethod": "activeConnectorByName",
+    "PolicyFragment": {
+      "pluralMethod": "policyFragments",
+      "singularMethod": "policyFragmentByName",
       "idField": "name",
-      "prefix": "activeConnector"
+      "prefix": "policyFragment"
+    },
+    "RevocationCheckPolicy": {
+      "pluralMethod": "revocationCheckPolicies",
+      "singularMethod": "revocationCheckPolicyByName",
+      "idField": "name",
+      "prefix": "revocationCheckPolic"
     },
     "SMConfig": {
       "pluralMethod": "smConfigs",
@@ -110,41 +158,23 @@
       "idField": "name",
       "prefix": "smConfig"
     },
-    "GlobalPolicy": {
-      "pluralMethod": "globalPolicies",
-      "singularMethod": "globalPolicyByTag",
-      "idField": "tag",
-      "prefix": "globalPolic"
-    },
-    "PolicyFragment": {
-      "pluralMethod": "policyFragments",
-      "singularMethod": "policyFragmentByName",
-      "idField": "name",
-      "prefix": "policyFragment"
-    },
     "ScheduledTask": {
       "pluralMethod": "scheduledTasks",
       "singularMethod": "scheduledTaskByName",
       "idField": "name",
       "prefix": "scheduledTask"
     },
-    "BackgroundTaskPolicy": {
-      "pluralMethod": "backgroundTaskPolicies",
-      "singularMethod": "backgroundTaskPolicyByName",
-      "idField": "name",
-      "prefix": "backgroundTaskPolic"
+    "Schema": {
+      "pluralMethod": "schemas",
+      "singularMethod": "schemaBySystemId",
+      "idField": "systemId",
+      "prefix": "schema"
     },
     "Secret": {
       "pluralMethod": "secrets",
       "singularMethod": "secretByName",
       "idField": "name",
       "prefix": "secret"
-    },
-    "Key": {
-      "pluralMethod": "keys",
-      "singularMethod": "keyByAlias",
-      "idField": "alias",
-      "prefix": "key"
     },
     "ServerModuleFile": {
       "pluralMethod": "serverModuleFiles",
@@ -157,37 +187,15 @@
       "singularMethod": "soapServiceByResolver",
       "idField": "resolvers",
       "idFieldEx": "resolvers { {{SoapResolvers}} }",
+      "idFields": ["name", "resolutionPath", "resolvers { {{SoapResolvers}} }"],
       "prefix": "soapService"
-    },
-    "Certificate": {
-      "pluralMethod": "trustedCerts",
-      "singularMethod": "trustedCertByThumbprint",
-      "idField": "thumbprintSha1",
-      "prefix": "trustedCert"
-    },
-    "RevocationCheckPolicy": {
-      "pluralMethod": "revocationCheckPolicies",
-      "singularMethod": "revocationCheckPolicyByName",
-      "idField": "name",
-      "prefix": "revocationCheckPolic"
     },
     "WebApiService": {
       "pluralMethod": "webApiServices",
       "singularMethod": "webApiServiceByResolutionPath",
       "idField": "resolutionPath",
+      "idFields": ["name", "resolutionPath"],
       "prefix": "webApiService"
-    },
-    "InternalWebApiService": {
-      "pluralMethod": "internalWebApiServices",
-      "singularMethod": "internalWebApiServiceByResolutionPath",
-      "idField": "resolutionPath",
-      "prefix": "internalWebApiService"
-    },
-    "InternalSoapService": {
-      "pluralMethod": "internalSoapServices",
-      "singularMethod": "internalSoapServiceByResolutionPath",
-      "idField": "resolutionPath",
-      "prefix": "internalSoapService"
     }
   },
   "parserHints": {

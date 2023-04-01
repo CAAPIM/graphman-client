@@ -56,26 +56,28 @@ type Certificate {
     name: String!
     "The Subject DN of this certificate"
     subjectDn : String!
-    "The start date of the validity period"
-    notBefore : DateTime!
-    "the end date of the validity period"
-    notAfter : DateTime!
+    "The sha1 thumbprint of the certificate"
+    thumbprintSha1 : String!
+    "The configuration checksum of this trusted certificate"
+    checksum: String!
+
     "Whether to perform hostname verification with this certificate"
     verifyHostname : Boolean!
     "Whether this certificate is a trust anchor"
     trustAnchor : Boolean!
     "The certificate is trusted for"
     trustedFor : [TrustedForType!]!
-    "The base 64 encoded string of this certificate"
-    certBase64 : String!
-    "The sha1 thumbprint of the certificate"
-    thumbprintSha1 : String!
     "The revocation check policy type"
     revocationCheckPolicyType : PolicyUsageType!
     "The specified revocation policy"
     revocationCheckPolicy : RevocationCheckPolicy
-    "The configuration checksum of this trusted certificate"
-    checksum: String!
+
+    "The start date of the validity period"
+    notBefore : DateTime!
+    "the end date of the validity period"
+    notAfter : DateTime!
+    "The base 64 encoded string of this certificate"
+    certBase64 : String!
 }
 
 "A revocation check policy for certificates"

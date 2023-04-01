@@ -29,20 +29,22 @@ type ActiveConnector {
     goid : ID!
     "The active connector name"
     name : String!
+    "The configuration checksum of this active connector"
+    checksum : String!
+
     "Whether this active connector is enabled"
     enabled : Boolean!
     "The active connector type - KAFKA, SFTP_POLLING_LISTENER, MQ_NATIVE"
     connectorType: ActiveConnectorType!
     "The name of the published service hardwired to the active connector"
     hardwiredServiceName: String
-    "The published service hardwired to the active connector"
-    hardwiredService: HardwiredService
     "The active connector Properties"
     properties: [EntityProperty!]
     "The advanced properties for active connector"
     advancedProperties: [EntityProperty!]
-    "The configuration checksum of this active connector"
-    checksum : String!
+
+    "The published service hardwired to the active connector"
+    hardwiredService: HardwiredService
 }
 
 input ActiveConnectorInput {

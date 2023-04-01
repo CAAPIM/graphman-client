@@ -1,45 +1,43 @@
 extend type Query {
-  "Get all policy fragments"
-  policyFragments : [PolicyFragment!]!
-  "Get policy fragment by name"
-  policyFragmentByName(name: String!) : PolicyFragment
-  "Get policy fragments inside a folder"
-  policyFragmentsByFolderPath(folderPath: String!) : [PolicyFragment!]!
-  "Get policy fragment by goid"
-  policyFragmentByGoid(goid: ID!) : PolicyFragment
-  "Get policy fragment by guid"
-  policyFragmentByGuid(guid: ID!) : PolicyFragment
-  "Get all global policies"
-  globalPolicies : [GlobalPolicy!]!
-  "Get global policy by tag"
-  globalPolicyByTag(tag: String!) : GlobalPolicy
-  "Get global policies inside a folder"
-  globalPoliciesByFolderPath(folderPath: String!) : [GlobalPolicy!]!
+    "Get all policy fragments"
+    policyFragments : [PolicyFragment!]!
+    "Get policy fragment by name"
+    policyFragmentByName(name: String!) : PolicyFragment
+    "Get policy fragments inside a folder"
+    policyFragmentsByFolderPath(folderPath: String!) : [PolicyFragment!]!
+    "Get policy fragment by goid"
+    policyFragmentByGoid(goid: ID!) : PolicyFragment
+    "Get policy fragment by guid"
+    policyFragmentByGuid(guid: ID!) : PolicyFragment
+    "Get all global policies"
+    globalPolicies : [GlobalPolicy!]!
+    "Get global policy by tag"
+    globalPolicyByTag(tag: String!) : GlobalPolicy
+    "Get global policies inside a folder"
+    globalPoliciesByFolderPath(folderPath: String!) : [GlobalPolicy!]!
 }
 
 extend type Mutation {
-  "Create or update policy fragments"
-  setPolicyFragments(input: [PolicyFragmentInput!]!) : PolicyFragmentsPayload!
-  "Delete policy fragments"
-  deletePolicyFragments(names: [String!]!) : PolicyFragmentsPayload!
-  "Create or update global policies"
-  setGlobalPolicies(input: [GlobalPolicyInput!]!) : GlobalPoliciesPayload!
-  "Delete global policies"
-  deleteGlobalPolicies(tags: [String!]!) : GlobalPoliciesPayload!
+    "Create or update policy fragments"
+    setPolicyFragments(input: [PolicyFragmentInput!]!) : PolicyFragmentsPayload!
+    "Delete policy fragments"
+    deletePolicyFragments(names: [String!]!) : PolicyFragmentsPayload!
+    "Create or update global policies"
+    setGlobalPolicies(input: [GlobalPolicyInput!]!) : GlobalPoliciesPayload!
+    "Delete global policies"
+    deleteGlobalPolicies(tags: [String!]!) : GlobalPoliciesPayload!
 }
 
 """
 A Global policy
 """
 type GlobalPolicy {
-    "The name of the policy (policies are unique by name)"
-    name: String!
-    "The folder path where this policy is located"
-    folderPath: String!
     "The goid for this policy"
     goid : ID!
     "The guid for this policy"
     guid : ID!
+    "The name of the policy (policies are unique by name)"
+    name: String!
     """
     Global policy tag. Possible values are :
       message-completed
@@ -50,89 +48,94 @@ type GlobalPolicy {
       pre-service
     """
     tag: String!
-    "The actual policy and dependencies"
-    policy: Policy!
     "The configuration checksum"
     checksum: String!
+
+    "The folder path where this policy is located"
+    folderPath: String!
+    "The actual policy and dependencies"
+    policy: Policy!
 }
 
  """
  A policy fragment that can be included in another policy
  """
  type PolicyFragment {
-   "The goid for this policy"
-   goid : ID!
-   "The guid for this policy"
-   guid : ID!
-   "The name of the policy (policies are unique by name)"
-   name: String!
-   "The folder path to the policy"
-   folderPath: String!
-   "The actual policy and dependencies"
-   policy: Policy!
-   soap: Boolean
-   "The configuration checksum"
-   checksum: String!
+    "The goid for this policy"
+    goid : ID!
+    "The guid for this policy"
+    guid : ID!
+    "The name of the policy (policies are unique by name)"
+    name: String!
+    "The configuration checksum"
+    checksum: String!
+
+    "The folder path to the policy"
+    folderPath: String!
+    soap: Boolean
+    "The actual policy and dependencies"
+    policy: Policy!
  }
 
  """
  Wrapper for the policy XML and the dependencies they include
  """
  type Policy {
-   "The policy XML"
-   xml: String!
-   "Entities that are directly referred to inside the policy XML"
-   directDependencies: PolicyDependency
-   "Entities that are directly referred to inside the policy XML in addition to ones in policy dependencies. More than second level, this keep going as deep as needed until no dependencies are found"
-   allDependencies: PolicyDependency
+    "The policy XML"
+    xml: String!
+    "Entities that are directly referred to inside the policy XML"
+    directDependencies: PolicyDependency
+    "Entities that are directly referred to inside the policy XML in addition to ones in policy dependencies. More than second level, this keep going as deep as needed until no dependencies are found"
+    allDependencies: PolicyDependency
  }
 
  """
  Policy Dependency contains all dependencies that may be referred to from the policy XML this is associated with
  """
  type PolicyDependency {
-   "Policy Fragments"
-   policyFragments : [PolicyFragment]
-   "Cluster properties"
-   clusterProperties : [ClusterProperty]
-   "Trusted certificates"
-   trustedCerts : [Certificate]
-   "Encass Configs"
-   encassConfigs : [EncassConfig]
-   "JDBC connections"
-   jdbcConnections: [JdbcConnection]
-   "Cassandra connections"
-   cassandraConnections: [CassandraConnection]
-   "JMS destinations"
-   jmsDestinations: [JmsDestination]
-   "Schemas in global resources"
-   schemas: [Schema]
-   "DTDs in global resources"
-   dtds: [Dtd]
-   "Federated identity provider configurations"
-   fips : [Fip]
-   "Ldap identity provider configurations"
-   ldaps : [Ldap]
-   "Internal idp users"
-   internalUsers : [InternalUser]
-   "Internal idp groups"
-   internalGroups : [InternalGroup]
-   "Federated identity provider users"
-   fipUsers : [FipUser]
-   "Federated identity provider groups"
-   fipGroups : [FipGroup]
-   secrets : [Secret]
-   keys : [Key]
-   "Server module files (signed modular or custom assertions)"
-   serverModuleFiles: [ServerModuleFile]
-   "Email Listeners"
-   emailListeners: [EmailListener]
-   "Listen Ports"
-   listenPorts: [ListenPort]
-   "Active Connectors (SFTP, MQ Native, Kafka)"
-   activeConnectors: [ActiveConnector]
-   "Siteminder Configurations"
-   smConfigs: [SMConfig]
+    "Active Connectors (SFTP, MQ Native, Kafka)"
+    activeConnectors: [ActiveConnector]
+    "Cassandra connections"
+    cassandraConnections: [CassandraConnection]
+    "Cluster properties"
+    clusterProperties : [ClusterProperty]
+    "DTDs in global resources"
+    dtds: [Dtd]
+    "Email Listeners"
+    emailListeners: [EmailListener]
+    "Encass Configs"
+    encassConfigs : [EncassConfig]
+    "Federated identity provider configurations"
+    fips : [Fip]
+    "Federated identity provider groups"
+    fipGroups : [FipGroup]
+    "Federated identity provider users"
+    fipUsers : [FipUser]
+    "Internal idp groups"
+    internalGroups : [InternalGroup]
+    "Internal idp users"
+    internalUsers : [InternalUser]
+    "JDBC connections"
+    jdbcConnections: [JdbcConnection]
+    "JMS destinations"
+    jmsDestinations: [JmsDestination]
+    "Private Keys"
+    keys : [Key]
+    "Ldap identity provider configurations"
+    ldaps : [Ldap]
+    "Listen Ports"
+    listenPorts: [ListenPort]
+    "Policy Fragments"
+    policyFragments : [PolicyFragment]
+    "Schemas in global resources"
+    schemas: [Schema]
+    secrets : [Secret]
+    "Server module files (signed modular or custom assertions)"
+    serverModuleFiles: [ServerModuleFile]
+    "Siteminder Configurations"
+    smConfigs: [SMConfig]
+    "Trusted certificates"
+    trustedCerts : [Certificate]
  }
 
  input PolicyInput {

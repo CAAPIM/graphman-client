@@ -1,24 +1,24 @@
 extend type Query {
-  "Get all listen ports"
-  listenPorts : [ListenPort!]!
-  "Get the listen port by name"
-  listenPortByName(name : String!) : ListenPort
-  "Get the listen ports by protocol"
-  listenPortsByProtocol(protocol: String!) : [ListenPort!]!
+    "Get all listen ports"
+    listenPorts : [ListenPort!]!
+    "Get the listen port by name"
+    listenPortByName(name : String!) : ListenPort
+    "Get the listen ports by protocol"
+    listenPortsByProtocol(protocol: String!) : [ListenPort!]!
 }
 
 extend type Mutation {
-  #Create or update existing listen ports.
-  #Match is carried by name. If match is found, it will be updated. Otherwise, it will be created.
-   """
-   Create or update Listen Ports.
-   If Listen Port with the same name exist, the Listen Port will be updated.
-   If no Listen Port with the name exist, a new Listen Port will be created.
-   """
-  setListenPorts(input: [ListenPortInput!]!): ListenPortsPayload!
+    #Create or update existing listen ports.
+    #Match is carried by name. If match is found, it will be updated. Otherwise, it will be created.
+    """
+    Create or update Listen Ports.
+    If Listen Port with the same name exist, the Listen Port will be updated.
+    If no Listen Port with the name exist, a new Listen Port will be created.
+    """
+    setListenPorts(input: [ListenPortInput!]!): ListenPortsPayload!
 
-  "Delete existing listen ports. Match is carried by name."
-  deleteListenPorts(names: [String!]!): ListenPortsPayload!
+    "Delete existing listen ports. Match is carried by name."
+    deleteListenPorts(names: [String!]!): ListenPortsPayload!
 }
 
 enum ListenPortFeature {
@@ -65,6 +65,9 @@ type ListenPort {
     goid : ID!
     "The listen port configuration name"
     name : String!
+    "The configuration checksum"
+    checksum: String!
+
     "Whether this listen port configuration is enabled"
     enabled : Boolean!
     """
@@ -86,16 +89,15 @@ type ListenPort {
     port : PositiveInt!
     "The name of the published service hardwired to the listen port"
     hardwiredServiceName: String
-    "The published service hardwired to the listen port"
-    hardwiredService: HardwiredService
     "Which Gateway services can be accessed through this listen port"
     enabledFeatures: [ListenPortFeature!]!
     "The listen port tls settings"
     tlsSettings: ListenPortTlsSettings
     "The listen port properties"
     properties: [EntityProperty!]
-    "The configuration checksum"
-    checksum: String!
+
+    "The published service hardwired to the listen port"
+    hardwiredService: HardwiredService
 }
 
 input ListenPortInput {

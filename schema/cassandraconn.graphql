@@ -34,28 +34,29 @@ type CassandraConnection {
     goid : ID!
     "The Cassandra Connection name"
     name : String!
+    "The configuration checksum of this Cassandra connection"
+    checksum: String!
+
+    "Whether this Cassandra connection is enabled"
+    enabled: Boolean!
     "The Cassandra keyspace name"
     keyspace: String!
     "The Cassandra connection points"
     contactPoints : [String!]!
     "The Cassandra server port"
     port: PositiveInt!
+    "The Cassandra connection compression type"
+    compression: CassandraCompression!
     "The username"
     username: String
     "The secure password reference."
     securePasswordName: String
-    "The Cassandra connection compression type"
-    compression: CassandraCompression!
     "Whether this Cassandra connection is SSL enabled"
     sslEnabled: Boolean!
     "Cipher suites used for SSL connection"
     cipherSuites: [String!]
-    "Whether this Cassandra connection is enabled"
-    enabled: Boolean!
     "The Cassandra connection properties"
     properties: [EntityProperty!]
-    "The configuration checksum of this Cassandra connection"
-    checksum: String!
 }
 
 input CassandraConnectionInput {

@@ -31,14 +31,15 @@ type Schema {
     goid : ID!
     "A reference to the schema. This id is what is referred to in policy and is often mirror of the target namespace"
     systemId : String!
+    "The configuration checksum"
+    checksum: String!
+
     "The target namespace in the xml schema"
     targetNs : String
     "An optional description for the schema"
     description : String
     "The content of XML schema"
     content : String!
-    "The configuration checksum"
-    checksum: String!
 }
 
 "A Document Type Definition (DTD) which can be referred to in policy"
@@ -47,14 +48,15 @@ type Dtd {
     goid : ID!
     "A reference to the DTD. This id is what is referred to in policy and is often mirror of the target namespace"
     systemId : String!
+    "The configuration checksum"
+    checksum: String!
+
     "The public id for the DTD"
     publicId : String
     "An optional description"
     description : String
     "The content of DTD itself"
     content : String!
-    "The configuration checksum"
-    checksum: String!
 }
 
 input SchemaInput {

@@ -23,14 +23,15 @@ type ClusterProperty {
     goid : ID!
     "The cluster property name"
     name : String!
-    "The cluster property value"
-    value : String!
+    "The configuration checksum of this cluster prop"
+    checksum: String!
+
     "The cluster property description"
     description : String
     "Whether this is a hidden property"
     hiddenProperty : Boolean!
-    "The configuration checksum of this cluster prop"
-    checksum: String!
+    "The cluster property value"
+    value : String!
 }
 
 "The inputs sent with the setClusterProperty Mutation"

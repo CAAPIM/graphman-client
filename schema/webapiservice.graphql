@@ -37,50 +37,50 @@ extend type Mutation {
 type WebApiService implements PublishedService {
     "The goid for this service"
     goid : ID!
-    "The guid for this service"
-    guid : ID
     "The name of the service"
     name: String!
     "The resolution path to the service"
     resolutionPath: String!
-    "The folder path to the service"
-    folderPath: String!
-    "The policy and dependencies"
-    policy: Policy!
+    "The configuration checksum"
+    checksum: String!
+
     "Whether or not the published service is enabled"
     enabled: Boolean!
+    "The folder path to the service"
+    folderPath: String!
     "Which http methods are allowed"
     methodsAllowed: [HttpMethod!]!
     tracingEnabled: Boolean!
     wssProcessingEnabled: Boolean!
     properties: [EntityProperty!]
-    "The configuration checksum"
-    checksum: String!
+
+    "The policy and dependencies"
+    policy: Policy!
 }
 
 "A Internal Web API service published on the Layer7 Gateway"
 type InternalWebApiService implements PublishedService {
     "The goid for this service"
     goid : ID!
-    "The guid for this service"
-    guid : ID
     "The name of the service"
     name: String!
     "The resolution path to the service"
     resolutionPath: String!
-    "The folder path to the service"
-    folderPath: String!
-    "The policy and dependencies"
-    policy: Policy!
+    "The configuration checksum"
+    checksum: String!
+
     "Whether or not the published service is enabled"
     enabled: Boolean!
+    "The folder path to the service"
+    folderPath: String!
     "Which http methods are allowed"
     methodsAllowed: [HttpMethod!]!
     tracingEnabled: Boolean!
     wssProcessingEnabled: Boolean!
     properties: [EntityProperty!]
-    "The configuration checksum"
-    checksum: String!
+
+    "The policy and dependencies"
+    policy: Policy!
 }
 
 input WebApiServiceInput {

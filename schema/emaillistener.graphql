@@ -26,36 +26,38 @@ type EmailListener {
     goid : ID!
     "The name of the email listener. If you are creating several listeners, make sure the name is descriptive"
     name : String!
+    "The configuration checksum"
+    checksum: String!
+
     "Whether this email listener is enabled(active)"
     enabled : Boolean!
+    "The type of email server (IMAP or POP3)"
+    serverType: EmailServerType!
     "The hostname of the email server. This name is verified against the X.509 certificate"
     hostname: String!
     "The port number to monitor"
     port : PositiveInt!
-    "The type of email server (IMAP or POP3)"
-    serverType: EmailServerType!
-    "Whether email server connection (POP3S or IMAPS) is SSL enabled"
-    sslEnabled: Boolean!
-    "Whether delete the messages on the mail server after retrieving"
-    deleteOnReceive: Boolean!
     "The folder name to check for emails (Only for IMAP)"
     folder: String!
-    "The listener will check for email after the specified number of seconds"
-    pollInterval: PositiveInt!
+    "Whether delete the messages on the mail server after retrieving"
+    deleteOnReceive: Boolean!
     "Email account name"
     username: String!
     "Email account password. The password could be in plain text or secure password reference"
     password: String!
     "The name of the published service hardwired to the email listener"
     hardwiredServiceName: String
-    "The published service hardwired to the email listener"
-    hardwiredService: HardwiredService
+    "Whether email server connection (POP3S or IMAPS) is SSL enabled"
+    sslEnabled: Boolean!
+    "The listener will check for email after the specified number of seconds"
+    pollInterval: PositiveInt!
     "Permitted maximum size of the message"
     sizeLimit: NonNegativeInt
     "The email listener properties excluding sizeLimit and HardwiredServiceName"
     properties: [EntityProperty!]
-    "The configuration checksum"
-    checksum: String!
+
+    "The published service hardwired to the email listener"
+    hardwiredService: HardwiredService
 }
 
 input EmailListenerInput {

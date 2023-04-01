@@ -83,13 +83,14 @@ type FipSearchResult {
 
 " A group of users defined in the internal identity provider "
 type InternalGroup {
-    name : String!
     goid : ID!
+    name : String!
+    "A checksum of the name, description and member names properties of the group"
+    checksum : String!
+
     description : String
     " The list of internal users that are part of this group "
     members : [InternalUser!]!
-    "A checksum of the name, description and member names properties of the group"
-    checksum : String!
 }
 
 input InternalGroupInput {
@@ -154,11 +155,12 @@ input FipGroupInput {
 
 " A user in the internal identity provider "
 type InternalUser {
-    name : String!
     goid : ID!
-    " List of groups this is member of "
-    memberOf : [InternalGroup!]!
+    name : String!
     login : String
+    checksum : String!
+
+    enabled : Boolean!
     "The hashed password of the user if defined"
     password : String
     "A client-side certificate associated with this user to use for pki type authentication"
@@ -166,53 +168,58 @@ type InternalUser {
     firstName : String
     lastName : String
     email : String
-    enabled : Boolean!
-    checksum : String!
+
+    " List of groups this is member of "
+    memberOf : [InternalGroup!]!
+
     # possible future expansion expiration, accountExpiration
 }
 
 " A group defined in a federated identity provider"
 type FipGroup {
-    name : String!
     goid : ID!
+    name : String!
     " The name of the FiP this group is defined in "
     providerName : String!
+    "A checksum of the name, description and member names properties of the group"
+    checksum : String!
+
     description : String
     " Fip users that member of this group "
     members : [FipUser!]!
-    "A checksum of the name, description and member names properties of the group"
-    checksum : String!
 }
 # Note FIP also has concept of virtual group with name, description, subjectDnPattern, emailPattern, isRegex
 
 " A user defined in a federated identity provider "
 type FipUser {
-    name : String!
     goid : ID!
+    name : String!
+    login : String
     " The name of the FiP this user is defined as part of "
     providerName : String!
-    " The list of Fip groups this user belongs to "
-    memberOf : [FipGroup!]!
-    login : String
+    checksum : String!
+
     subjectDn : String
     "A client-side certificate associated with this user to use for pki type authentication"
     certBase64 : String
     firstName : String
     lastName : String
     email : String
-    checksum : String!
+    " The list of Fip groups this user belongs to "
+    memberOf : [FipGroup!]!
 }
 
 "A Federated Identity Provider"
 type Fip {
-    name : String!
     goid : ID!
+    name : String!
+    checksum : String!
+
     enableCredentialTypeSaml : Boolean!
     enableCredentialTypeX509 : Boolean!
     certificateValidation: CertificateValidationType
     " The certificates in the trusted certificate table that establish the trust for this FIP "
     certificateReferences : [Certificate!]!
-    checksum : String!
 }
 
 input FipInput {
@@ -323,8 +330,10 @@ refer to these ldap users and groups, thee references are
 interpreted by the ldap directory itself.
 """
 type Ldap {
-    name : String!
     goid : ID!
+    name : String!
+    checksum : String!
+
     ldapUrls : [String!]!
     "Whether or not the gateway presents a client cert when connecting at those ldap urls (only relevant when ldaps url)"
     ldapsClientAuthEnabled : Boolean!
@@ -342,7 +351,6 @@ type Ldap {
 #   userCertificateUseType : UserCertificateUseType!
 #   ntlm stuff, 8 settings and additional arbitrary props
 #   6 additional user cert settings
-    checksum : String!
 }
 
 # enum UserCertificateUseType {

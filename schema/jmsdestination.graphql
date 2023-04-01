@@ -44,7 +44,13 @@ type JmsDestination {
     direction: String!
     "The JMS provider type (GENERIC JMS or TIBCO EMS or WEBSPHERE MQ OVER LDAP or WEBLOGIC JMS"
     providerType : String!
+    "The configuration checksum of this JMS destination"
+    checksum: String!
 
+    "Whether this JMS destination is enabled"
+    enabled: Boolean!
+    "Whether this JMS destination is template"
+    template: Boolean!
     "The initial context factory class name"
     initialContextFactoryClassname: String!
     "The connection factory name"
@@ -55,7 +61,6 @@ type JmsDestination {
     jndiUsername: String
     "The JNDI password"
     jndiPassword: String
-
     "The JNDI SSL details"
     jndiSslDetails: JmsSslDetails!
 
@@ -67,20 +72,11 @@ type JmsDestination {
     destinationUsername: String
     "The password for destination connection"
     destinationPassword: String
-
     "The destination SSL details"
     destinationSslDetails: JmsSslDetails!
 
-    "Whether this JMS destination is template"
-    template: Boolean!
-    "Whether this JMS destination is enabled"
-    enabled: Boolean!
-
     "The remaining JMS Destination properties that include inbound options or outbound options or additional properties"
     properties: [EntityProperty!]
-
-    "The configuration checksum of this JMS destination"
-    checksum: String!
 }
 
 "A JMS SSL Details"
@@ -158,4 +154,3 @@ type JmsDestinationsPayload implements EntityMutationsPayload {
     "The created/updated JMS destinations."
     jmsDestinations: [JmsDestination]!
 }
-

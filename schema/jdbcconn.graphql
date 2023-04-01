@@ -43,12 +43,15 @@ type JdbcConnection {
     goid : ID!
     "The JDBC Connection name"
     name : String!
+    "The configuration checksum of this JDBC connection"
+    checksum: String!
+
+    "Whether this JDBC connection is enabled"
+    enabled: Boolean!
     "The JDBC driver class name"
     driverClass: String!
     "The JDBC url"
     jdbcUrl : String!
-    "Whether this JDBC connection is enabled"
-    enabled: Boolean!
     "The username"
     username: String!
     "The password or the secure password reference."
@@ -59,8 +62,6 @@ type JdbcConnection {
     maxPoolSize: PositiveInt!
     "The JDBC connection properties excluding 'user' and 'password'"
     properties: [EntityProperty!]
-    "The configuration checksum of this JDBC connection"
-    checksum: String!
 }
 
 input JdbcConnectionInput {

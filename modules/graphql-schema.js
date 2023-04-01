@@ -40,11 +40,8 @@ function build() {
         if (!value.summaryFields || !Array.isArray(value.summaryFields) || value.summaryFields.length === 0) {
             const sFields = value.summaryFields = ["goid"];
             if (value.fields.includes("guid")) sFields.push("guid");
-            if (value.idFieldEx) sFields.push(value.idFieldEx);
+            if (value.idFields) value.idFields.forEach(item => sFields.push(item));
             else if (value.idField) sFields.push(value.idField);
-            if (value.idFields) value.idFields.forEach(item => {
-                if (!sFields.includes(item)) sFields.push(item);
-            });
             sFields.push("checksum");
         }
 

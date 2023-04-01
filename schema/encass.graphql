@@ -3,16 +3,16 @@
 #
 
 extend type Query {
-  "Get all Encapsulated Assertion Configurations"
-  encassConfigs : [EncassConfig!]!
-  "Get all Encapsulated Assertion Configurations by folder path"
-  encassConfigsByFolderPath(folderPath: String!) : [EncassConfig!]!
-  "Get Encapsulated Assertion Configuration by name"
-  encassConfigByName(name: String!) : EncassConfig
-  "Get Encapsulated Assertion Configuration by goid"
-  encassConfigByGoid(goid: ID!) : EncassConfig
-  "Get Encapsulated Assertion Configuration by guid"
-  encassConfigByGuid(guid: ID!) : EncassConfig
+    "Get all Encapsulated Assertion Configurations"
+    encassConfigs : [EncassConfig!]!
+    "Get all Encapsulated Assertion Configurations by folder path"
+    encassConfigsByFolderPath(folderPath: String!) : [EncassConfig!]!
+    "Get Encapsulated Assertion Configuration by name"
+    encassConfigByName(name: String!) : EncassConfig
+    "Get Encapsulated Assertion Configuration by goid"
+    encassConfigByGoid(goid: ID!) : EncassConfig
+    "Get Encapsulated Assertion Configuration by guid"
+    encassConfigByGuid(guid: ID!) : EncassConfig
 }
 
 extend type Mutation {
@@ -24,37 +24,38 @@ extend type Mutation {
 
 "An Encapsulated Assertion Configuration"
 type EncassConfig {
-  "The name of the encass config"
-  name: String!
-  description: String
-  "The policy it points to and its dependencies"
-  policyName: String!
-  "the input argument descriptions for this encass"
-  encassArgs : [EncassArg!]
-  "the output descriptions"
-  encassResults : [EncassResult!]
-  properties: [EntityProperty!]
-  "The goid for this encass config"
-  goid : ID!
-  "The guid for this encass config"
-  guid : ID!
-  "The configuration checksum of this encass"
-  checksum: String!
+    "The goid for this encass config"
+    goid : ID!
+    "The guid for this encass config"
+    guid : ID!
+    "The name of the encass config"
+    name: String!
+    "The configuration checksum of this encass"
+    checksum: String!
+
+    description: String
+    "The policy it points to and its dependencies"
+    policyName: String!
+    "the input argument descriptions for this encass"
+    encassArgs : [EncassArg!]
+    "the output descriptions"
+    encassResults : [EncassResult!]
+    properties: [EntityProperty!]
 }
 
 "The description of an input argument for an encapsulated assertion"
 type EncassArg {
-  "The name of the input"
-  name: String!
-  # com.l7tech.policy.variable.DataType
-  "The type of input"
-  type : DataType!
-  "The order of the argument in the admin gui"
-  ordinal : Int
-  "The prompt in the admin gui for this encass argument"
-  guiPrompt : Boolean
-  "The label in the admin gui associated with this encass argument"
-  guiLabel : String
+    "The name of the input"
+    name: String!
+    # com.l7tech.policy.variable.DataType
+    "The type of input"
+    type : DataType!
+    "The order of the argument in the admin gui"
+    ordinal : Int
+    "The prompt in the admin gui for this encass argument"
+    guiPrompt : Boolean
+    "The label in the admin gui associated with this encass argument"
+    guiLabel : String
 }
 
 "The description of an output from the encapsulated assertion"
@@ -127,7 +128,7 @@ input EncassResultInput {
 }
 
 type EncassConfigsPayload implements EntityMutationsPayload {
-  status: [EntityMutationStatus!]!
-  detailedStatus: [EntityMutationDetailedStatus!]!
-  encassConfigs: [EncassConfig]!
+    status: [EntityMutationStatus!]!
+    detailedStatus: [EntityMutationDetailedStatus!]!
+    encassConfigs: [EncassConfig]!
 }

@@ -1,19 +1,19 @@
 extend type Query {
-  "Get all siteminder configurations"
-  smConfigs : [SMConfig!]!
-  "Get the siteminder configuration by name"
-  smConfigByName(name : String!) : SMConfig
+    "Get all siteminder configurations"
+    smConfigs : [SMConfig!]!
+    "Get the siteminder configuration by name"
+    smConfigByName(name : String!) : SMConfig
 }
 
 extend type Mutation {
-  """
-  Create or update existing siteminder configurations.
-  Match is carried by name. If match is found, it will be updated. Otherwise, it will be created
-  """
-  setSMConfigs(input: [SMConfigInput!]!): SMConfigsPayload!
+    """
+    Create or update existing siteminder configurations.
+    Match is carried by name. If match is found, it will be updated. Otherwise, it will be created
+    """
+    setSMConfigs(input: [SMConfigInput!]!): SMConfigsPayload!
 
-  "Delete existing siteminder configurations. Match is carried by name"
-  deleteSMConfigs(names: [String!]!): SMConfigsPayload!
+    "Delete existing siteminder configurations. Match is carried by name"
+    deleteSMConfigs(names: [String!]!): SMConfigsPayload!
 }
 
 enum SMCryptoMode {
@@ -27,6 +27,9 @@ type SMConfig {
     goid : ID!
     "Name of the CA SSO configuration"
     name : String!
+    "The configuration checksum"
+    checksum: String!
+
     "Indicates whether the specified configuration is currently enabled or disabled"
     enabled : Boolean!
     "Name of the host registered with the CA SSO Policy Server"
@@ -52,8 +55,6 @@ type SMConfig {
     securePasswordName: String!
     "The Siteminder configuration properties"
     properties: [EntityProperty!]
-    "The configuration checksum"
-    checksum: String!
 }
 
 input SMConfigInput {
