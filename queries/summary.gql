@@ -1,92 +1,96 @@
 query summary {
-    
     webApiServices {
         {{WebApiService:summary}}
     }
     soapServices {
         {{SoapService:summary}}
     }
-	internalWebApiServices {
+    internalWebApiServices {
         {{InternalWebApiService:summary}}
     }
     internalSoapServices {
         {{InternalSoapService:summary}}
     }
-	encassConfigs {
+    encassConfigs {
         {{EncassConfig:summary}}
     }
-	globalPolicies {
+    globalPolicies {
         {{GlobalPolicy:summary}}
     }
     backgroundTaskPolicies {
         {{BackgroundTaskPolicy:summary}}
     }
-	policyFragments {
+    policyFragments {
         {{PolicyFragment:summary}}
     }
-	
+    
+    activeConnectors {
+        {{ActiveConnector:summary}}
+    }
+    cassandraConnections {
+        {{CassandraConnection:summary}}
+    }
     clusterProperties {
         {{ClusterProperty:summary}}
-    }
-    trustedCerts {
-        {{Certificate:summary}}
-    }
-	secrets {
-        {{Secret:summary}}
-    }
-    schemas {
-        {{Schema:summary}}
     }
     dtds {
         {{Dtd:summary}}
     }
-	jdbcConnections {
-        {{JdbcConnection:summary}}
+    emailListeners {
+        {{EmailListener:summary}}
     }
     fips {
         {{Fip:summary}}
     }
-    ldaps {
-        {{Ldap:summary}}
-    }
-    internalGroups {
-        {{InternalGroup:summary}}
-    }
     fipGroups {
         {{FipGroup:summary}}
-    }
-    internalUsers {
-        {{InternalUser:summary}}
     }
     fipUsers {
         {{FipUser:summary}}
     }
-        
-    cassandraConnections {
-        {{CassandraConnection:summary}}
+    internalDtds {
+        {{Dtd:summary}}
+    }
+    internalGroups {
+        {{InternalGroup:summary}}
+    }
+    internalSchemas {
+        {{Schema:summary}}
+    }
+    internalUsers {
+        {{InternalUser:summary}}
+    }
+    jdbcConnections {
+        {{JdbcConnection:summary}}
     }
     jmsDestinations {
         {{JmsDestination:summary}}
     }
-	smConfigs {
-	    {{SMConfig:summary}}
-	}
-    emailListeners {
-        {{EmailListener:summary}}
+    keys {
+        {{Key:summary}}
+    }
+    ldaps {
+        {{Ldap:summary}}
     }
     listenPorts {
         {{ListenPort:summary}}
     }
-    activeConnectors {
-	    {{ActiveConnector:summary}}
-	}
     scheduledTasks {
         {{ScheduledTask:summary}}
     }
-	keys {
-        {{Key:summary}}
+    schemas {
+        {{Schema:summary}}
+    }
+    secrets {
+        {{Secret:summary}}
     }
     serverModuleFiles {
         {{ServerModuleFile:summary}}
+    }
+    smConfigs {
+        {{SMConfig:summary}}
+    }
+    trustedCerts {
+        {{Certificate:summary}}
     }
 }

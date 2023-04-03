@@ -1,92 +1,96 @@
 query all {
-    
     webApiServices {
         {{WebApiService}}
     }
     soapServices {
         {{SoapService}}
     }
-	internalWebApiServices {
+    internalWebApiServices {
         {{InternalWebApiService}}
     }
     internalSoapServices {
         {{InternalSoapService}}
     }
-	encassConfigs {
+    encassConfigs {
         {{EncassConfig}}
     }
-	globalPolicies {
+    globalPolicies {
         {{GlobalPolicy}}
     }
     backgroundTaskPolicies {
         {{BackgroundTaskPolicy}}
     }
-	policyFragments {
+    policyFragments {
         {{PolicyFragment}}
     }
-	
+    
+    activeConnectors {
+        {{ActiveConnector:-hardwiredService}}
+    }
+    cassandraConnections {
+        {{CassandraConnection}}
+    }
     clusterProperties {
         {{ClusterProperty}}
-    }
-    trustedCerts {
-        {{Certificate}}
-    }
-	secrets {
-        {{Secret}}
-    }
-    schemas {
-        {{Schema}}
     }
     dtds {
         {{Dtd}}
     }
-	jdbcConnections {
-        {{JdbcConnection}}
+    emailListeners {
+        {{EmailListener:-hardwiredService}}
     }
     fips {
         {{Fip}}
     }
-    ldaps {
-        {{Ldap}}
-    }
-    internalGroups {
-        {{InternalGroup}}
-    }
     fipGroups {
         {{FipGroup}}
-    }
-    internalUsers {
-        {{InternalUser}}
     }
     fipUsers {
         {{FipUser}}
     }
-        
-    cassandraConnections {
-        {{CassandraConnection}}
+    internalDtds {
+        {{Dtd}}
+    }
+    internalGroups {
+        {{InternalGroup}}
+    }
+    internalSchemas {
+        {{Schema}}
+    }
+    internalUsers {
+        {{InternalUser}}
+    }
+    jdbcConnections {
+        {{JdbcConnection}}
     }
     jmsDestinations {
         {{JmsDestination}}
     }
-	smConfigs {
-	    {{SMConfig}}
-	}
-    emailListeners {
-        {{EmailListener:-hardwiredService}}
+    keys {
+        {{Key}}
+    }
+    ldaps {
+        {{Ldap}}
     }
     listenPorts {
         {{ListenPort:-hardwiredService}}
     }
-    activeConnectors {
-	    {{ActiveConnector:-hardwiredService}}
-	}
     scheduledTasks {
         {{ScheduledTask}}
     }
-	keys {
-        {{Key}}
+    schemas {
+        {{Schema}}
+    }
+    secrets {
+        {{Secret}}
     }
     serverModuleFiles {
         {{ServerModuleFile:-filePartName}}
+    }
+    smConfigs {
+        {{SMConfig}}
+    }
+    trustedCerts {
+        {{Certificate}}
     }
 }
