@@ -4581,7 +4581,7 @@
 					"description": "# Web API Services\n\nHow to query and mutate published services of type Web API (REST apis)"
 				}
 			],
-			"description": "# CRUD Config Entities\n\nThis folder contains queries (read) and mutations (create/update/delete) for full CRUD for each Layer7 Gateway configuration entity type supported."
+			"description": "# CRUD Config Entities\n\nThis folder contains queries (read) and mutations (create/update/delete) for full CRUD for each Layer7 Gateway configuration entity type supported.\n\nNOTE: Please do install the pre-req RESTMAN bundle (postman/graphman-prereq.bundle) for successful execution of CRUD operations (especially, SET mutation for Trusted Certs)."
 		},
 		{
 			"name": "Summary and compare",
