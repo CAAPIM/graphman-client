@@ -300,6 +300,12 @@ let importSanitizer = function () {
                 utils.info(`removing hardwiredService fields from ${entity.name}`);
                 delete entity.hardwiredService;
             }
+        } else if (pluralMethod === "trustedCerts") {
+            if (entity.revocationCheckPolicy) {
+                utils.info(`removing revocationCheckPolicy fields from ${entity.name}`);
+                entity.revocationCheckPolicyName = entity.revocationCheckPolicy.name;
+                delete entity.revocationCheckPolicy;
+            }
         }
     }
 }();
