@@ -8,821 +8,381 @@
 	},
 	"item": [
 		{
-			"name": "Bundles and migration",
+			"name": "Bundles and Migration",
 			"item": [
 				{
-					"name": "Everything",
-					"item": [
+					"name": "Apply Bundle",
+					"event": [
 						{
-							"name": "Create bundle",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"",
-											"const meta = JSON.parse(pm.collectionVariables.get(\"meta\"));",
-											"const bundle = pm.response.json();",
-											"if (!bundle.data) throw \"Input does not seem to be a valid response\";",
-											"",
-											"normalize(bundle.data);",
-											"delete bundle.data;",
-											"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));",
-											"",
-											"function metaKey(key) {",
-											"    for(var prop in meta) if (key.startsWith(meta[prop].prefix)) return prop;",
-											"    return key;",
-											"}",
-											"",
-											"function normalize(data) {",
-											"    Object.entries(data).forEach(([key, value]) => {",
-											"        const mkey = metaKey(key);",
-											"        let target = bundle[mkey];",
-											"        if (!target) target = bundle[mkey] = [];",
-											"",
-											"        if (Array.isArray(value)) value.forEach(item => target.push(item));",
-											"        else target.push(value);",
-											"",
-											"        target.filter(item => item.allDependencies).forEach(item => normalize(item.allDependencies, bundle));",
-											"        target.filter(item => item.directDependencies).forEach(item => normalize(item.directDependencies, bundle));",
-											"    });",
-											"}",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query everything {\n    webApiServices {\n        goid name resolutionPath checksum \n        enabled folderPath methodsAllowed tracingEnabled wssProcessingEnabled \n        properties { name value }\n        policy { xml }\n    }\n    soapServices {\n        goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum \n        enabled folderPath soapVersion methodsAllowed tracingEnabled wssProcessingEnabled laxResolution \n        properties { name value }\n        wsdl \n        policy { xml }\n    }\n    internalWebApiServices {\n        goid name resolutionPath checksum \n        enabled folderPath methodsAllowed tracingEnabled wssProcessingEnabled \n        properties { name value } \n        policy { xml }\n    }\n    internalSoapServices {\n        goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum \n        enabled folderPath soapVersion methodsAllowed tracingEnabled wssProcessingEnabled laxResolution \n        properties { name value } \n        wsdl \n        policy { xml }\n    }\n    encassConfigs {\n        goid guid name checksum \n        description policyName \n        encassArgs { name type ordinal guiPrompt guiLabel } \n        encassResults{ name type } \n        properties { name value }\n    }\n    globalPolicies {\n        goid guid name tag checksum \n        folderPath \n        policy { xml }\n    }\n    backgroundTaskPolicies {\n        goid guid name checksum \n        folderPath soap \n        policy { xml }\n    }\n    policyFragments {\n        goid guid name checksum \n        folderPath soap \n        policy { xml }\n    }\n\n    activeConnectors {\n        goid name checksum \n        enabled connectorType hardwiredServiceName \n        properties { name value } \n        advancedProperties { name value }\n    }\n    dtds {\n        goid systemId checksum \n        publicId description content\n    }\n    cassandraConnections {\n        goid name checksum \n        enabled keyspace contactPoints port compression username securePasswordName sslEnabled cipherSuites \n        properties { name value }\n    }\n    clusterProperties {\n        goid name checksum \n        description hiddenProperty value\n    }\n    emailListeners {\n        goid name checksum \n        enabled serverType hostname port folder deleteOnReceive username password hardwiredServiceName sslEnabled pollInterval sizeLimit \n        properties { name value }\n    }\n    fips {\n        goid name checksum \n        enableCredentialTypeSaml enableCredentialTypeX509 certificateValidation \n        certificateReferences { \n             goid name subjectDn thumbprintSha1 checksum \n             verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n             revocationCheckPolicy { goid name } \n             notBefore notAfter certBase64 \n        }\n    }\n    fipGroups {\n        goid name providerName checksum \n        description \n        members { \n            goid name login providerName checksum \n            subjectDn certBase64 firstName lastName email \n        }\n    }\n    fipUsers {\n        goid name login providerName checksum \n        subjectDn certBase64 firstName lastName email \n        memberOf { \n            goid name providerName checksum \n            description \n        }\n    }\n    internalDtds {\n        goid systemId checksum \n        publicId description content\n    }\n    internalGroups {\n        goid name checksum \n        description \n        members { \n            goid name login checksum \n            enabled password certBase64 firstName lastName email \n        }\n    }\n    internalSchemas {\n        goid systemId checksum \n        targetNs description content\n    }\n    internalUsers {\n         goid name login checksum \n         enabled password certBase64 firstName lastName email \n         memberOf { goid name checksum description }\n    }\n    jdbcConnections {\n         goid name checksum \n         enabled driverClass jdbcUrl username password minPoolSize maxPoolSize \n         properties { name value }\n    }\n    jmsDestinations {\n         goid connectionGoid name direction providerType checksum \n         enabled template initialContextFactoryClassname connectionFactoryName jndiUrl jndiUsername jndiPassword \n         jndiSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n         destinationType destinationName destinationUsername destinationPassword \n         destinationSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n         properties { name value }\n    }\n    keys {\n         goid keystoreId alias checksum \n         keyType subjectDn p12 certChain\n    }\n    ldaps {\n        goid name checksum \n        ldapUrls ldapsClientAuthEnabled ldapsClientKeystoreId ldapsClientKeyAlias searchBase writable bindDn bindPassword \n        userMappings { objClass nameAttrName loginAttrName passwdAttrName firstNameAttrName lastNameAttrName emailNameAttrName kerberosAttrName kerberosEnterpriseAttrName userCertAttrName passwdType { val } } \n        groupMappings { objClass nameAttrName memberAttrName memberStrategy { val } }\n    }\n    listenPorts {\n         goid name checksum \n         enabled protocol port hardwiredServiceName enabledFeatures \n         tlsSettings { clientAuthentication keystoreId keyAlias tlsVersions cipherSuites useCipherSuitesOrder } \n         properties { name value }\n    }\n    scheduledTasks {\n         goid name checksum \n         policyName jobType cronExpression executeOnSingleNode executeOnCreation executionDate status runAsUser runAsUserProviderName\n    }\n    schemas {\n         goid systemId checksum \n         targetNs description content\n    }\n    secrets {\n         goid name checksum \n         description secret secretType variableReferencable\n    }\n    serverModuleFiles {\n        goid name checksum \n        moduleType moduleSha256 signature signerCertBase64 \n        properties { name value } \n        moduleStates { nodeId nodeName state description } \n        moduleStateSummary { state description }\n    }\n    smConfigs {\n        goid name checksum \n        enabled agentHost agentIP agentHostConfig agentSecret cryptoMode ipCheckEnabled updateSSOToken clusterFailoverThreshold nonClusterFailover username securePasswordName \n        properties { name value }\n    }\n    trustedCerts {\n         goid name subjectDn thumbprintSha1 checksum \n         verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n         revocationCheckPolicy { goid name } \n         notBefore notAfter certBase64\n    }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# Graph Bundle All\n\nThis gets all configuration entities in one graphman query."
-							},
-							"response": []
-						},
-						{
-							"name": "Apply bundle",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"let bundle = JSON.parse(pm.environment.get(\"source_bundle\"));\r",
-											"\r",
-											"if (bundle.activeConnectors) bundle.activeConnectors.forEach(item => delete item.hardwiredService);\r",
-											"if (bundle.emailListeners) bundle.emailListeners.forEach(item => delete item.hardwiredService);\r",
-											"if (bundle.listenPorts) bundle.listenPorts.forEach(item => delete item.hardwiredService);\r",
-											"if (bundle.soapServices) bundle.soapServices.forEach(item => delete item.resolvers);\r",
-											"if (bundle.serverModuleFiles) bundle.serverModuleFiles.forEach(item => {\r",
-											"    delete item.filePartName;\r",
-											"    delete item.moduleStates;\r",
-											"    delete item.moduleStateSummary;\r",
-											"});\r",
-											"\r",
-											"if (bundle.internalGroups) bundle.internalGroups.forEach(item => {\r",
-											"    delete item.members;\r",
-											"    delete item.enabled;\r",
-											"});\r",
-											"if (bundle.internalUsers) bundle.internalUsers.forEach(item => {\r",
-											"    delete item.members;\r",
-											"    delete item.enabled;\r",
-											"    if (item.memberOf) item.memberOf.forEach(subItem => {\r",
-											"        delete subItem.goid;\r",
-											"        delete subItem.description;\r",
-											"        delete subItem.checksum;\r",
-											"    });\r",
-											"});\r",
-											"if (bundle.internalSoapServices) bundle.internalSoapServices.forEach(item => delete item.resolvers);\r",
-											"\r",
-											"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "mutation applyBundle (\n    $clusterProperties: [ClusterPropertyInput!]!=[],\n    $webApiServices: [WebApiServiceInput!]!=[],\n    $encassConfigs:[EncassConfigInput!]!=[],\n    $trustedCerts:[TrustedCertInput!]!=[],\n    $dtds:[DtdInput!]!=[],\n    $schemas:[SchemaInput!]!=[],\n    $jdbcConnections:[JdbcConnectionInput!]!=[],\n    $soapServices:[SoapServiceInput!]!=[],\n    $policyFragments: [PolicyFragmentInput!]!=[],\n    $fips:[FipInput!]!=[],\n    $ldaps:[LdapInput!]!=[],\n    $fipGroups:[FipGroupInput!]!=[],\n    $internalGroups:[InternalGroupInput!]!=[],\n    $fipUsers:[FipUserInput!]!=[],\n    $internalUsers:[InternalUserInput!]!=[],\n    $keys: [KeyInput!]!=[],\n    $secrets: [SecretInput!]!=[],\n    $cassandraConnections:[CassandraConnectionInput!]!=[],\n    $jmsDestinations:[JmsDestinationInput!]!=[],\n    $internalWebApiServices: [WebApiServiceInput!]!=[],\n    $internalSoapServices:[SoapServiceInput!]!=[],\n    $emailListeners: [EmailListenerInput!]!=[],\n    $listenPorts: [ListenPortInput!]!=[],\n    $activeConnectors: [ActiveConnectorInput!]!=[],\n    $smConfigs: [SMConfigInput!]!=[],\n    $globalPolicies:[GlobalPolicyInput!]!=[],\n    $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n    $scheduledTasks:[ScheduledTaskInput!]!=[],\n    $serverModuleFiles:[ServerModuleFileInput!]!=[]) {\n        setServerModuleFiles(input: $serverModuleFiles){serverModuleFiles{goid} detailedStatus {status description}}\n        setClusterProperties (input: $clusterProperties){clusterProperties {goid} detailedStatus {status description}}\n        setTrustedCerts (input: $trustedCerts){trustedCerts {goid} detailedStatus {status description}}\n        setSecrets (input: $secrets){secrets{name} detailedStatus {status description}}\n        setSchemas (input: $schemas){schemas {goid} detailedStatus {status description}}\n        setDtds (input: $dtds){dtds {goid} detailedStatus {status description}}\n        setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid} detailedStatus {status description}}\n        setFips (input: $fips){fips{goid} detailedStatus {status description}}\n        setLdaps (input: $ldaps){ldaps{goid} detailedStatus {status description}}\n        setFipGroups (input: $fipGroups){fipGroups{goid} detailedStatus {status description}}\n        setInternalGroups (input: $internalGroups){internalGroups{goid} detailedStatus {status description}}\n        setFipUsers (input: $fipUsers){fipUsers{goid} detailedStatus {status description}}\n        setInternalUsers (input: $internalUsers){internalUsers{goid} detailedStatus {status description}}\n        setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid} detailedStatus {status description}}\n        setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid} detailedStatus {status description}}\n        setSMConfigs (input: $smConfigs){smConfigs {goid} detailedStatus {status description}}\n        setPolicyFragments (input: $policyFragments){policyFragments {goid} detailedStatus {status description}}\n        setEncassConfigs (input: $encassConfigs){encassConfigs {goid} detailedStatus {status description}}\n        setGlobalPolicies (input: $globalPolicies){globalPolicies {goid} detailedStatus {status description}}\n        setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid} detailedStatus {status description}}\n        setWebApiServices (input: $webApiServices){webApiServices {goid} detailedStatus {status description}}\n        setSoapServices (input: $soapServices){soapServices {goid} detailedStatus {status description}}\n        setInternalWebApiServices (input: $internalWebApiServices){internalWebApiServices {goid} detailedStatus {status description}}\n        setInternalSoapServices (input: $internalSoapServices){internalSoapServices {goid} detailedStatus {status description}}\n        setEmailListeners (input: $emailListeners){emailListeners {goid} detailedStatus {status description}}\n        setListenPorts (input: $listenPorts){listenPorts {goid} detailedStatus {status description}}\n        setActiveConnectors (input: $activeConnectors){activeConnectors {goid} detailedStatus {status description}}\n        setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid} detailedStatus {status description}}\n\n        # Keys must be mutated at the end\n        setKeys (input: $keys) {keys {alias} detailedStatus {status description}}\n}\n",
-										"variables": "{{source_bundle}}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "# Apply Bundle Template\n\nThis is a generic apply template mutation. It takes a graphman bundle as input. That bundle is a variable that was set by a Create bundle request prior to this one."
-							},
-							"response": []
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let bundle = JSON.parse(pm.environment.get(\"source_bundle\"));\r",
+									"\r",
+									"if (bundle.activeConnectors) bundle.activeConnectors.forEach(item => delete item.hardwiredService);\r",
+									"if (bundle.emailListeners) bundle.emailListeners.forEach(item => delete item.hardwiredService);\r",
+									"if (bundle.listenPorts) bundle.listenPorts.forEach(item => delete item.hardwiredService);\r",
+									"if (bundle.soapServices) bundle.soapServices.forEach(item => delete item.resolvers);\r",
+									"if (bundle.serverModuleFiles) bundle.serverModuleFiles.forEach(item => {\r",
+									"    delete item.filePartName;\r",
+									"    delete item.moduleStates;\r",
+									"    delete item.moduleStateSummary;\r",
+									"});\r",
+									"if (bundle.trustedCerts) bundle.trustedCerts.forEach(item => {\r",
+									"    if (item.revocationCheckPolicy) {\r",
+									"        item.revocationCheckPolicyName = item.revocationCheckPolicy.name;\r",
+									"        delete item.revocationCheckPolicy;\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"if (bundle.internalGroups) bundle.internalGroups.forEach(item => {\r",
+									"    delete item.members;\r",
+									"    delete item.enabled;\r",
+									"});\r",
+									"if (bundle.internalUsers) bundle.internalUsers.forEach(item => {\r",
+									"    delete item.members;\r",
+									"    delete item.enabled;\r",
+									"    if (item.memberOf) item.memberOf.forEach(subItem => {\r",
+									"        delete subItem.goid;\r",
+									"        delete subItem.description;\r",
+									"        delete subItem.checksum;\r",
+									"    });\r",
+									"});\r",
+									"if (bundle.internalSoapServices) bundle.internalSoapServices.forEach(item => delete item.resolvers);\r",
+									"\r",
+									"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
-					"description": "You can Run this folder and it will bundle everything from the source and apply it to the target.\n\nMake sure source and target are set in the Create and Apply"
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation applyBundle (\n    $clusterProperties: [ClusterPropertyInput!]!=[],\n    $webApiServices: [WebApiServiceInput!]!=[],\n    $encassConfigs:[EncassConfigInput!]!=[],\n    $trustedCerts:[TrustedCertInput!]!=[],\n    $dtds:[DtdInput!]!=[],\n    $schemas:[SchemaInput!]!=[],\n    $jdbcConnections:[JdbcConnectionInput!]!=[],\n    $soapServices:[SoapServiceInput!]!=[],\n    $policyFragments: [PolicyFragmentInput!]!=[],\n    $fips:[FipInput!]!=[],\n    $ldaps:[LdapInput!]!=[],\n    $fipGroups:[FipGroupInput!]!=[],\n    $internalGroups:[InternalGroupInput!]!=[],\n    $fipUsers:[FipUserInput!]!=[],\n    $internalUsers:[InternalUserInput!]!=[],\n    $keys: [KeyInput!]!=[],\n    $secrets: [SecretInput!]!=[],\n    $cassandraConnections:[CassandraConnectionInput!]!=[],\n    $jmsDestinations:[JmsDestinationInput!]!=[],\n    $internalWebApiServices: [WebApiServiceInput!]!=[],\n    $internalSoapServices:[SoapServiceInput!]!=[],\n    $emailListeners: [EmailListenerInput!]!=[],\n    $listenPorts: [ListenPortInput!]!=[],\n    $activeConnectors: [ActiveConnectorInput!]!=[],\n    $smConfigs: [SMConfigInput!]!=[],\n    $globalPolicies:[GlobalPolicyInput!]!=[],\n    $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n    $scheduledTasks:[ScheduledTaskInput!]!=[],\n    $serverModuleFiles:[ServerModuleFileInput!]!=[]) {\n        setServerModuleFiles(input: $serverModuleFiles){serverModuleFiles{goid} detailedStatus {status description}}\n        setClusterProperties (input: $clusterProperties){clusterProperties {goid} detailedStatus {status description}}\n        setTrustedCerts (input: $trustedCerts){trustedCerts {goid} detailedStatus {status description}}\n        setSecrets (input: $secrets){secrets{name} detailedStatus {status description}}\n        setSchemas (input: $schemas){schemas {goid} detailedStatus {status description}}\n        setDtds (input: $dtds){dtds {goid} detailedStatus {status description}}\n        setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid} detailedStatus {status description}}\n        setFips (input: $fips){fips{goid} detailedStatus {status description}}\n        setLdaps (input: $ldaps){ldaps{goid} detailedStatus {status description}}\n        setFipGroups (input: $fipGroups){fipGroups{goid} detailedStatus {status description}}\n        setInternalGroups (input: $internalGroups){internalGroups{goid} detailedStatus {status description}}\n        setFipUsers (input: $fipUsers){fipUsers{goid} detailedStatus {status description}}\n        setInternalUsers (input: $internalUsers){internalUsers{goid} detailedStatus {status description}}\n        setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid} detailedStatus {status description}}\n        setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid} detailedStatus {status description}}\n        setSMConfigs (input: $smConfigs){smConfigs {goid} detailedStatus {status description}}\n        setPolicyFragments (input: $policyFragments){policyFragments {goid} detailedStatus {status description}}\n        setEncassConfigs (input: $encassConfigs){encassConfigs {goid} detailedStatus {status description}}\n        setGlobalPolicies (input: $globalPolicies){globalPolicies {goid} detailedStatus {status description}}\n        setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid} detailedStatus {status description}}\n        setWebApiServices (input: $webApiServices){webApiServices {goid} detailedStatus {status description}}\n        setSoapServices (input: $soapServices){soapServices {goid} detailedStatus {status description}}\n        setInternalWebApiServices (input: $internalWebApiServices){internalWebApiServices {goid} detailedStatus {status description}}\n        setInternalSoapServices (input: $internalSoapServices){internalSoapServices {goid} detailedStatus {status description}}\n        setEmailListeners (input: $emailListeners){emailListeners {goid} detailedStatus {status description}}\n        setListenPorts (input: $listenPorts){listenPorts {goid} detailedStatus {status description}}\n        setActiveConnectors (input: $activeConnectors){activeConnectors {goid} detailedStatus {status description}}\n        setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid} detailedStatus {status description}}\n\n        # Keys must be mutated at the end\n        setKeys (input: $keys) {keys {alias} detailedStatus {status description}}\n}\n",
+								"variables": "{{source_bundle}}"
+							}
+						},
+						"url": {
+							"raw": "{{target_gw}}",
+							"host": [
+								"{{target_gw}}"
+							]
+						},
+						"description": "# Apply Bundle Template\n\nThis is a generic apply template mutation. It takes a graphman bundle as input. That bundle is a variable that was set by a Create bundle request prior to this one."
+					},
+					"response": []
 				},
 				{
-					"name": "Policy and dependencies",
-					"item": [
+					"name": "Policy with Dependencies - Create bundle",
+					"event": [
 						{
-							"name": "Create bundle",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const outpackage = {};",
-											"outpackage.clusterProperties = [];",
-											"outpackage.jdbcConnections = [];",
-											"outpackage.trustedCerts = [];",
-											"outpackage.policyFragments = [];",
-											"outpackage.encassConfigs = [];",
-											"outpackage.schemas = [];",
-											"outpackage.dtds = [];",
-											"outpackage.webApiServices = [];",
-											"outpackage.soapServices = [];",
-											"outpackage.internalGroups = [];",
-											"outpackage.ldaps = [];",
-											"outpackage.fips = [];",
-											"outpackage.fipGroups = [];",
-											"outpackage.internalUsers = [];",
-											"outpackage.fipUsers = [];",
-											"outpackage.keys = [];",
-											"outpackage.secrets = [];",
-											"",
-											"function processPolicyDependencies(policy) {",
-											"    const dependencies = policy.allDependencies;",
-											"    if (dependencies) {",
-											"        processParent(dependencies);",
-											"        delete policy.allDependencies;",
-											"    }",
-											"}",
-											"function processSingleEntity(item, target) {",
-											"    if (item.policy) processPolicyDependencies(item.policy);",
-											"    // special case for soap",
-											"    if (item.resolvers) {",
-											"        if (item.resolvers.resolutionPath) {",
-											"            item.resolutionPath = item.resolvers.resolutionPath",
-											"        }",
-											"        // drop resolvers which doesnt belong in mutation",
-											"        delete item.resolvers;",
-											"    }",
-											"    target.push(item);",
-											"}",
-											"function processParent(bundleEntitiesParent) {",
-											"    var keys = Object.keys(bundleEntitiesParent);",
-											"    var entries = Object.values(bundleEntitiesParent);",
-											"    for (var i = 0; i < keys.length; i++) {",
-											"        var reportTarget = null;",
-											"        if (keys[i].startsWith(\"webApiService\")) {",
-											"            reportTarget = outpackage.webApiServices;",
-											"        } else if (keys[i].startsWith(\"soapService\")) {",
-											"            reportTarget = outpackage.soapServices;",
-											"        } else if (keys[i].startsWith(\"policyFragment\")) {",
-											"            reportTarget = outpackage.policyFragments;",
-											"        } else if (keys[i].startsWith(\"encassConfig\")) {",
-											"            reportTarget = outpackage.encassConfigs;",
-											"        } else if (keys[i].startsWith(\"trustedCert\")) {",
-											"            reportTarget = outpackage.trustedCerts;",
-											"        } else if (keys[i].startsWith(\"clusterPropert\")) { // on purpose to catch both singular and plural",
-											"            reportTarget = outpackage.clusterProperties;",
-											"        } else if (keys[i].startsWith(\"jdbcConnection\")) {",
-											"            reportTarget = outpackage.jdbcConnections;",
-											"        } else if (keys[i].startsWith(\"dtd\")) {",
-											"            reportTarget = outpackage.dtds;",
-											"        } else if (keys[i].startsWith(\"schema\")) {",
-											"            reportTarget = outpackage.schemas;",
-											"        } else if (keys[i].startsWith(\"fipGroup\")) {",
-											"            reportTarget = outpackage.fipGroups;",
-											"        } else if (keys[i].startsWith(\"fipUser\")) {",
-											"            reportTarget = outpackage.fipUsers;",
-											"        } else if (keys[i].startsWith(\"fip\")) {",
-											"            reportTarget = outpackage.fips;",
-											"        } else if (keys[i].startsWith(\"internalGroup\")) {",
-											"            reportTarget = outpackage.internalGroups;",
-											"        } else if (keys[i].startsWith(\"internalUser\")) {",
-											"            reportTarget = outpackage.internalUsers;",
-											"        } else if (keys[i].startsWith(\"ldap\")) {",
-											"            reportTarget = outpackage.ldaps;",
-											"        } else if (keys[i].startsWith(\"key\")) {",
-											"            reportTarget = outpackage.keys;",
-											"        } else if (keys[i].startsWith(\"secret\")) {",
-											"            reportTarget = outpackage.secrets;",
-											"        } else {",
-											"            console.error(\"Unrecognized \" + keys[i]);",
-											"        }",
-											"",
-											"        if (reportTarget) {",
-											"            if (Array.isArray(entries[i])) {",
-											"                var arrayEntries = entries[i];",
-											"                for (var j = 0; j < arrayEntries.length; j++) {",
-											"                    processSingleEntity(arrayEntries[j], reportTarget);",
-											"                }",
-											"            } else {",
-											"                processSingleEntity(entries[i], reportTarget);",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"let root=pm.response.json();",
-											"if (!root.data) {",
-											"    throw \"Input does not seem to be graphql response\";",
-											"}",
-											"processParent(root.data);",
-											"",
-											"// cleanup bundle of empty sections",
-											"const keys = Object.keys(outpackage);",
-											"for (var i = 0; i < keys.length; i++)  {",
-											"    const prop = outpackage[keys[i]];",
-											"    if (prop) {",
-											"        if (Array.isArray(prop)) {",
-											"            if (prop.length < 1) delete outpackage[keys[i]];",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"pm.environment.set(\"package_by_policy\", JSON.stringify(outpackage, null, 2));",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query policyFragmentByName ($name: String!) {\n    policyFragmentByName (name: $name) {\n        name\n        folderPath\n        policy {\n            xml\n            allDependencies {\n              policyFragments {\n                    name\n                    checksum\n                    folderPath\n                    guid\n                    policy {\n                        xml\n                    }\n                }\n                encassConfigs {\n                    name\n                    checksum\n                    policyName\n                    guid\n                    encassArgs {\n                        name\n                        type\n                        ordinal\n                        guiLabel\n                        guiPrompt\n                    }\n                    encassResults {\n                        name\n                        type\n                    }\n                }\n                trustedCerts {\n                    name\n                    checksum\n                    certBase64\n                    verifyHostname\n                    trustAnchor\n                    trustedFor\n                    revocationCheckPolicyType\n                }\n                clusterProperties {\n                    name\n                    checksum\n                    value\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                    driverClass\n                    jdbcUrl\n                    enabled\n                    username\n                    password\n                    minPoolSize\n                    maxPoolSize\n                    properties {\n                        name\n                        value\n                    }\n                }\n                schemas {\n                    systemId\n                    checksum\n                    targetNs\n                    description\n                    content\n                }\n                dtds {\n                    systemId\n                    checksum\n                    publicId\n                    description\n                    content\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                    enableCredentialTypeX509\n                    enableCredentialTypeSaml\n                    certificateReferences {\n                        thumbprintSha1\n                    }\n                }\n                ldaps {\n                    name\n                    goid\n                    ldapUrls\n                    ldapsClientAuthEnabled\n                    ldapsClientKeyAlias\n                    searchBase\n                    writable\n                    bindDn\n                    bindPassword\n                    userMappings {\n                        objClass\n                        nameAttrName\n                        loginAttrName\n                        passwdAttrName\n                        firstNameAttrName\n                        lastNameAttrName\n                        emailNameAttrName\n                        kerberosAttrName\n                        kerberosEnterpriseAttrName\n                        userCertAttrName\n                        passwdType {\n                            val\n                        }\n                    }\n                    groupMappings {\n                        objClass\n                        nameAttrName\n                        memberAttrName\n                        memberStrategy {\n                            val\n                        }\n                    }\n                    checksum\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                    description\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                    description\n                }\n                internalUsers {\n                    name\n                    goid\n                    checksum\n                    memberOf {\n                        name\n                    }\n                    login\n                    password\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                    subjectDn\n                    memberOf {\n                        name\n                    }\n                    login\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                    p12\n                }\n                secrets {\n                    name\n                    secretType\n                    checksum\n                    goid\n                    variableReferencable\n                    secret\n                    description\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    keyspace\n                    contactPoints\n                    port\n                    username\n                    securePasswordName\n                    sslEnabled\n                    cipherSuites\n                    properties {\n                        name\n                        value\n                    }\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    connectionGoid\n                    name\n                    direction\n                    providerType\n                    initialContextFactoryClassname\n                    connectionFactoryName\n                    jndiUrl\n                    jndiUsername\n                    jndiPassword\n                    template\n                    enabled\n                    jndiSslDetails {\n                        sslEnabled\n                        sslForAuthenticationOnly\n                        sslVerifyServerCertificate\n                        sslVerifyServerHostname\n                        sslClientKeyAlias\n                    }\n                    destinationType\n                    destinationName\n                    destinationUsername\n                    destinationPassword\n                    destinationSslDetails {\n                        sslEnabled\n                        sslForAuthenticationOnly\n                        sslVerifyServerCertificate\n                        sslVerifyServerHostname\n                        sslClientKeyAlias\n                    }\n                    template\n                    enabled\n                    properties {\n                        name\n                        value\n                    }\n                    checksum\n                }\n            }\n        }\n        guid\n    }\n}",
-										"variables": "{\n    \"name\": \"Policy with encass\"\n}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# Policy and dependencies bundle\n\nThis graphman query retrieves a policy and all its dependencies (including nested dependencies).\n\nThe script in Tests (running post-request) produces an applicable bundle from the graphman response. This bundle is persisted in an environment variable.\n\nInput:\n\nSee Body, GraphQL Variables. Set name: the name of the policy you want to package with its dependencies."
-							},
-							"response": []
-						},
-						{
-							"name": "Apply bundle",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "mutation applyBundle ($clusterProperties: [ClusterPropertyInput!]!=[],\n        $webApiServices: [WebApiServiceInput!]!=[],\n        $encassConfigs:[EncassConfigInput!]!=[],\n        $trustedCerts:[TrustedCertInput!]!=[],\n        $dtds:[DtdInput!]!=[],\n        $schemas:[SchemaInput!]!=[],\n        $jdbcConnections:[JdbcConnectionInput!]!=[],\n        $soapServices:[SoapServiceInput!]!=[],\n        $policyFragments: [PolicyFragmentInput!]!=[],\n        $fips:[FipInput!]!=[],\n        $ldaps:[LdapInput!]!=[],\n        $fipGroups:[FipGroupInput!]!=[],\n        $internalGroups:[InternalGroupInput!]!=[],\n        $fipUsers:[FipUserInput!]!=[],\n        $internalUsers:[InternalUserInput!]!=[],\n        $keys: [KeyInput!]!=[],\n        $secrets: [SecretInput!]!=[],\n        $cassandraConnections:[CassandraConnectionInput!]!=[],\n        $jmsDestinations:[JmsDestinationInput!]!=[],\n        $globalPolicies:[GlobalPolicyInput!]!=[],\n        $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n        $scheduledTasks:[ScheduledTaskInput!]!=[]) {\n    setClusterProperties (input: $clusterProperties){clusterProperties {goid}}\n    setTrustedCerts (input: $trustedCerts){trustedCerts {goid}}\n    setSchemas (input: $schemas){schemas {goid}}\n    setDtds (input: $dtds){dtds {goid}}\n    setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid}}\n    setFips (input: $fips){fips{goid}}\n    setLdaps (input: $ldaps){ldaps{goid}}\n    setFipGroups (input: $fipGroups){fipGroups{goid}}\n    setInternalGroups (input: $internalGroups){internalGroups{goid}}\n    setFipUsers (input: $fipUsers){fipUsers{goid}}\n    setInternalUsers (input: $internalUsers){internalUsers{goid}}\n    setKeys (input: $keys) {keys {alias}}\n    setSecrets (input: $secrets){secrets{name}}\n    setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid}}\n    setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid}}\n    setPolicyFragments (input: $policyFragments){policyFragments {goid}}\n    setEncassConfigs (input: $encassConfigs){encassConfigs {goid}}\n    setGlobalPolicies (input: $globalPolicies){globalPolicies {goid}}\n    setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid}}\n    setWebApiServices (input: $webApiServices){webApiServices {goid}}\n    setSoapServices (input: $soapServices){soapServices {goid}}\n    setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid}}\n}",
-										"variables": "{{package_by_policy}}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "# Apply bundle\n\nApplies the bundle that is recorded in the environment variable by the previous call (Create Bundle). Make sure you are using the same postman environment between those two calls."
-							},
-							"response": []
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"const meta = JSON.parse(pm.collectionVariables.get(\"meta\"));",
+									"const bundle = pm.response.json();",
+									"if (!bundle.data) throw \"Input does not seem to be a valid response\";",
+									"",
+									"normalize(bundle.data);",
+									"delete bundle.data;",
+									"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));",
+									"",
+									"function metaKey(key) {",
+									"    for(var prop in meta) if (key.startsWith(meta[prop].prefix)) return prop;",
+									"    return key;",
+									"}",
+									"",
+									"function normalize(data) {",
+									"    Object.entries(data).forEach(([key, value]) => {",
+									"        const mkey = metaKey(key);",
+									"        let target = bundle[mkey];",
+									"        if (!target) target = bundle[mkey] = [];",
+									"",
+									"        if (Array.isArray(value)) value.forEach(item => target.push(item));",
+									"        else target.push(value);",
+									"",
+									"        target.filter(item => item.allDependencies).forEach(item => normalize(item.allDependencies, bundle));",
+									"        target.filter(item => item.directDependencies).forEach(item => normalize(item.directDependencies, bundle));",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
-					"description": "Bundle example using a policy as a starting point"
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query policyFragmentByName ($name: String!) {\n    policyFragmentByName (name: $name) {\n        goid\n        guid\n        name\n        checksum\n\n        folderPath\n        soap\n        policy {\n            xml\n            allDependencies {\n                encassConfigs {\n                    goid guid name checksum \n                    description policyName \n                    encassArgs { name type ordinal guiPrompt guiLabel } \n                    encassResults{ name type } \n                    properties { name value }\n                }\n                policyFragments {\n                    goid guid name checksum \n                    folderPath soap \n                    policy { xml }\n                }\n\n                activeConnectors {\n                    goid name checksum \n                    enabled connectorType hardwiredServiceName \n                    properties { name value } \n                    advancedProperties { name value }\n                }\n                dtds {\n                    goid systemId checksum \n                    publicId description content\n                }\n                cassandraConnections {\n                    goid name checksum \n                    enabled keyspace contactPoints port compression username securePasswordName sslEnabled cipherSuites \n                    properties { name value }\n                }\n                clusterProperties {\n                    goid name checksum \n                    description hiddenProperty value\n                }\n                emailListeners {\n                    goid name checksum \n                    enabled serverType hostname port folder deleteOnReceive username password hardwiredServiceName sslEnabled pollInterval sizeLimit \n                    properties { name value }\n                }\n                fips {\n                    goid name checksum \n                    enableCredentialTypeSaml enableCredentialTypeX509 certificateValidation \n                    certificateReferences { \n                        goid name subjectDn thumbprintSha1 checksum \n                        verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n                        revocationCheckPolicy { goid name } \n                        notBefore notAfter certBase64 \n                    }\n                }\n                fipGroups {\n                    goid name providerName checksum \n                    description \n                    members { \n                        goid name login providerName checksum \n                        subjectDn certBase64 firstName lastName email \n                    }\n                }\n                fipUsers {\n                    goid name login providerName checksum \n                    subjectDn certBase64 firstName lastName email \n                    memberOf { \n                        goid name providerName checksum \n                        description \n                    }\n                }\n                internalGroups {\n                    goid name checksum \n                    description \n                    members { \n                        goid name login checksum \n                        enabled password certBase64 firstName lastName email \n                    }\n                }\n                internalUsers {\n                    goid name login checksum \n                    enabled password certBase64 firstName lastName email \n                    memberOf { goid name checksum description }\n                }\n                jdbcConnections {\n                    goid name checksum \n                    enabled driverClass jdbcUrl username password minPoolSize maxPoolSize \n                    properties { name value }\n                }\n                jmsDestinations {\n                    goid connectionGoid name direction providerType checksum \n                    enabled template initialContextFactoryClassname connectionFactoryName jndiUrl jndiUsername jndiPassword \n                    jndiSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n                    destinationType destinationName destinationUsername destinationPassword \n                    destinationSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n                    properties { name value }\n                }\n                keys {\n                    goid keystoreId alias checksum \n                    keyType subjectDn p12 certChain\n                }\n                ldaps {\n                    goid name checksum \n                    ldapUrls ldapsClientAuthEnabled ldapsClientKeystoreId ldapsClientKeyAlias searchBase writable bindDn bindPassword \n                    userMappings { objClass nameAttrName loginAttrName passwdAttrName firstNameAttrName lastNameAttrName emailNameAttrName kerberosAttrName kerberosEnterpriseAttrName userCertAttrName passwdType { val } } \n                    groupMappings { objClass nameAttrName memberAttrName memberStrategy { val } }\n                }\n                listenPorts {\n                    goid name checksum \n                    enabled protocol port hardwiredServiceName enabledFeatures \n                    tlsSettings { clientAuthentication keystoreId keyAlias tlsVersions cipherSuites useCipherSuitesOrder } \n                    properties { name value }\n                }\n                schemas {\n                    goid systemId checksum \n                    targetNs description content\n                }\n                secrets {\n                    goid name checksum \n                    description secret secretType variableReferencable\n                }\n                serverModuleFiles {\n                    goid name checksum \n                    moduleType moduleSha256 signature signerCertBase64 \n                    properties { name value } \n                    moduleStates { nodeId nodeName state description } \n                    moduleStateSummary { state description }\n                }\n                smConfigs {\n                    goid name checksum \n                    enabled agentHost agentIP agentHostConfig agentSecret cryptoMode ipCheckEnabled updateSSOToken clusterFailoverThreshold nonClusterFailover username securePasswordName \n                    properties { name value }\n                }\n                trustedCerts {\n                    goid name subjectDn thumbprintSha1 checksum \n                    verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n                    revocationCheckPolicy { goid name } \n                    notBefore notAfter certBase64\n                }\n            }\n        }\n    }\n}",
+								"variables": "{\n    \"name\": \"some-policy\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{source_gw}}",
+							"host": [
+								"{{source_gw}}"
+							]
+						},
+						"description": "# Policy and dependencies bundle\n\nThis graphman query retrieves a policy and all its dependencies (including nested dependencies).\n\nThe script in Tests (running post-request) produces an applicable bundle from the graphman response. This bundle is persisted in an environment variable.\n\nInput:\n\nSee Body, GraphQL Variables. Set name: the name of the policy you want to package with its dependencies."
+					},
+					"response": []
 				},
 				{
-					"name": "Folder and subfolders",
-					"item": [
+					"name": "Service with Dependencies - Create bundle",
+					"event": [
 						{
-							"name": "Create bundle",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const outpackage = {};",
-											"outpackage.clusterProperties = [];",
-											"outpackage.jdbcConnections = [];",
-											"outpackage.trustedCerts = [];",
-											"outpackage.policyFragments = [];",
-											"outpackage.encassConfigs = [];",
-											"outpackage.schemas = [];",
-											"outpackage.dtds = [];",
-											"outpackage.webApiServices = [];",
-											"outpackage.soapServices = [];",
-											"outpackage.internalGroups = [];",
-											"outpackage.ldaps = [];",
-											"outpackage.fips = [];",
-											"outpackage.fipGroups = [];",
-											"outpackage.internalUsers = [];",
-											"outpackage.fipUsers = [];",
-											"outpackage.keys = [];",
-											"outpackage.secrets = [];",
-											"",
-											"function processPolicyDependencies(policy) {",
-											"    const dependencies = policy.allDependencies;",
-											"    if (dependencies) {",
-											"        processParent(dependencies);",
-											"        delete policy.allDependencies;",
-											"    }",
-											"}",
-											"function processSingleEntity(item, target) {",
-											"    if (item.policy) processPolicyDependencies(item.policy);",
-											"    // special case for soap",
-											"    if (item.resolvers) {",
-											"        if (item.resolvers.resolutionPath) {",
-											"            item.resolutionPath = item.resolvers.resolutionPath",
-											"        }",
-											"        // drop resolvers which doesnt belong in mutation",
-											"        delete item.resolvers;",
-											"    }",
-											"    target.push(item);",
-											"}",
-											"function processParent(bundleEntitiesParent) {",
-											"    var keys = Object.keys(bundleEntitiesParent);",
-											"    var entries = Object.values(bundleEntitiesParent);",
-											"    for (var i = 0; i < keys.length; i++) {",
-											"        var reportTarget = null;",
-											"        if (keys[i].startsWith(\"webApiService\")) {",
-											"            reportTarget = outpackage.webApiServices;",
-											"        } else if (keys[i].startsWith(\"soapService\")) {",
-											"            reportTarget = outpackage.soapServices;",
-											"        } else if (keys[i].startsWith(\"policyFragment\")) {",
-											"            reportTarget = outpackage.policyFragments;",
-											"        } else if (keys[i].startsWith(\"encassConfig\")) {",
-											"            reportTarget = outpackage.encassConfigs;",
-											"        } else if (keys[i].startsWith(\"trustedCert\")) {",
-											"            reportTarget = outpackage.trustedCerts;",
-											"        } else if (keys[i].startsWith(\"clusterPropert\")) { // on purpose to catch both singular and plural",
-											"            reportTarget = outpackage.clusterProperties;",
-											"        } else if (keys[i].startsWith(\"jdbcConnection\")) {",
-											"            reportTarget = outpackage.jdbcConnections;",
-											"        } else if (keys[i].startsWith(\"dtd\")) {",
-											"            reportTarget = outpackage.dtds;",
-											"        } else if (keys[i].startsWith(\"schema\")) {",
-											"            reportTarget = outpackage.schemas;",
-											"        } else if (keys[i].startsWith(\"fipGroup\")) {",
-											"            reportTarget = outpackage.fipGroups;",
-											"        } else if (keys[i].startsWith(\"fipUser\")) {",
-											"            reportTarget = outpackage.fipUsers;",
-											"        } else if (keys[i].startsWith(\"fip\")) {",
-											"            reportTarget = outpackage.fips;",
-											"        } else if (keys[i].startsWith(\"internalGroup\")) {",
-											"            reportTarget = outpackage.internalGroups;",
-											"        } else if (keys[i].startsWith(\"internalUser\")) {",
-											"            reportTarget = outpackage.internalUsers;",
-											"        } else if (keys[i].startsWith(\"ldap\")) {",
-											"            reportTarget = outpackage.ldaps;",
-											"        } else if (keys[i].startsWith(\"key\")) {",
-											"            reportTarget = outpackage.keys;",
-											"        } else if (keys[i].startsWith(\"secret\")) {",
-											"            reportTarget = outpackage.secrets;",
-											"        } else {",
-											"            console.error(\"Unrecognized \" + keys[i]);",
-											"        }",
-											"",
-											"        if (reportTarget) {",
-											"            if (Array.isArray(entries[i])) {",
-											"                var arrayEntries = entries[i];",
-											"                for (var j = 0; j < arrayEntries.length; j++) {",
-											"                    processSingleEntity(arrayEntries[j], reportTarget);",
-											"                }",
-											"            } else {",
-											"                processSingleEntity(entries[i], reportTarget);",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"let root=pm.response.json();",
-											"if (!root.data) {",
-											"    throw \"Input does not seem to be graphql response\";",
-											"}",
-											"processParent(root.data);",
-											"",
-											"// cleanup bundle of empty sections",
-											"const keys = Object.keys(outpackage);",
-											"for (var i = 0; i < keys.length; i++)  {",
-											"    const prop = outpackage[keys[i]];",
-											"    if (prop) {",
-											"        if (Array.isArray(prop)) {",
-											"            if (prop.length < 1) delete outpackage[keys[i]];",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"pm.environment.set(\"package_by_folder\", JSON.stringify(outpackage, null, 2));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query folderContents ($folderPath: String!) {\n    policyFragmentsByFolderPath (folderPath: $folderPath) {\n        name\n        checksum\n        folderPath\n        policy {\n            xml\n        }\n        guid\n    }\n    webApiServicesByFolderPath (folderPath: $folderPath) {\n        name\n        checksum\n        resolutionPath\n        folderPath\n        policy {\n            xml\n        }\n        enabled\n        methodsAllowed\n    }\n}",
-										"variables": "{\n    \"folderPath\": \"/\"\n}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# Folder and sub-folders bundle\n\nThis graphman queries retrieves all services and policies in a folder and its subfolders.\n\nThe script in Tests (running post-request) produces an applicable bundle from the graphman response. This bundle is persisted in an environment variable.\n\nInput:\n\nSee Body, GraphQL Variables. Set folderPath: the folderPath containing the services and policies you want to package."
-							},
-							"response": []
-						},
-						{
-							"name": "Apply bundle",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "mutation applyBundle ($clusterProperties: [ClusterPropertyInput!]!=[],\n        $webApiServices: [WebApiServiceInput!]!=[],\n        $encassConfigs:[EncassConfigInput!]!=[],\n        $trustedCerts:[TrustedCertInput!]!=[],\n        $dtds:[DtdInput!]!=[],\n        $schemas:[SchemaInput!]!=[],\n        $jdbcConnections:[JdbcConnectionInput!]!=[],\n        $soapServices:[SoapServiceInput!]!=[],\n        $policyFragments: [PolicyFragmentInput!]!=[],\n        $fips:[FipInput!]!=[],\n        $ldaps:[LdapInput!]!=[],\n        $fipGroups:[FipGroupInput!]!=[],\n        $internalGroups:[InternalGroupInput!]!=[],\n        $fipUsers:[FipUserInput!]!=[],\n        $internalUsers:[InternalUserInput!]!=[],\n        $keys: [KeyInput!]!=[],\n        $secrets: [SecretInput!]!=[],\n        $cassandraConnections:[CassandraConnectionInput!]!=[],\n        $jmsDestinations:[JmsDestinationInput!]!=[],\n        $globalPolicies:[GlobalPolicyInput!]!=[],\n        $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n        $scheduledTasks:[ScheduledTaskInput!]!=[]) {\n    setClusterProperties (input: $clusterProperties){clusterProperties {goid}}\n    setTrustedCerts (input: $trustedCerts){trustedCerts {goid}}\n    setSchemas (input: $schemas){schemas {goid}}\n    setDtds (input: $dtds){dtds {goid}}\n    setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid}}\n    setFips (input: $fips){fips{goid}}\n    setLdaps (input: $ldaps){ldaps{goid}}\n    setFipGroups (input: $fipGroups){fipGroups{goid}}\n    setInternalGroups (input: $internalGroups){internalGroups{goid}}\n    setFipUsers (input: $fipUsers){fipUsers{goid}}\n    setInternalUsers (input: $internalUsers){internalUsers{goid}}\n    setKeys (input: $keys) {keys {alias}}\n    setSecrets (input: $secrets){secrets{name}}\n    setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid}}\n    setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid}}\n    setPolicyFragments (input: $policyFragments){policyFragments {goid}}\n    setEncassConfigs (input: $encassConfigs){encassConfigs {goid}}\n    setGlobalPolicies (input: $globalPolicies){globalPolicies {goid}}\n    setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid}}\n    setWebApiServices (input: $webApiServices){webApiServices {goid}}\n    setSoapServices (input: $soapServices){soapServices {goid}}\n    setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid}}\n}",
-										"variables": "{{package_by_folder}}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "# Apply bundle\n\nApplies the bundle that is recorded in the environment variable by the previous call (Create Bundle). Make sure you are using the same postman environment between those two calls."
-							},
-							"response": []
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"const meta = JSON.parse(pm.collectionVariables.get(\"meta\"));",
+									"const bundle = pm.response.json();",
+									"if (!bundle.data) throw \"Input does not seem to be a valid response\";",
+									"",
+									"normalize(bundle.data);",
+									"delete bundle.data;",
+									"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));",
+									"",
+									"function metaKey(key) {",
+									"    for(var prop in meta) if (key.startsWith(meta[prop].prefix)) return prop;",
+									"    return key;",
+									"}",
+									"",
+									"function normalize(data) {",
+									"    Object.entries(data).forEach(([key, value]) => {",
+									"        const mkey = metaKey(key);",
+									"        let target = bundle[mkey];",
+									"        if (!target) target = bundle[mkey] = [];",
+									"",
+									"        if (Array.isArray(value)) value.forEach(item => target.push(item));",
+									"        else target.push(value);",
+									"",
+									"        target.filter(item => item.allDependencies).forEach(item => normalize(item.allDependencies, bundle));",
+									"        target.filter(item => item.directDependencies).forEach(item => normalize(item.directDependencies, bundle));",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
-					"description": "This example shows bundle creation for all services and policies in a folder location"
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query serviceWithDependencies ($resolutionPath: String!) {\n    webApiServiceByResolutionPath (resolutionPath: $resolutionPath) {\n        goid\n        guid\n        name\n        resolutionPath\n        checksum\n\n        enabled\n        folderPath\n        methodsAllowed\n        properties {name value}\n        tracingEnabled\n        wssProcessingEnabled\n        policy {\n            xml\n            allDependencies {\n                encassConfigs {\n                    goid guid name checksum \n                    description policyName \n                    encassArgs { name type ordinal guiPrompt guiLabel } \n                    encassResults{ name type } \n                    properties { name value }\n                }\n                policyFragments {\n                    goid guid name checksum \n                    folderPath soap \n                    policy { xml }\n                }\n\n                activeConnectors {\n                    goid name checksum \n                    enabled connectorType hardwiredServiceName \n                    properties { name value } \n                    advancedProperties { name value }\n                }\n                dtds {\n                    goid systemId checksum \n                    publicId description content\n                }\n                cassandraConnections {\n                    goid name checksum \n                    enabled keyspace contactPoints port compression username securePasswordName sslEnabled cipherSuites \n                    properties { name value }\n                }\n                clusterProperties {\n                    goid name checksum \n                    description hiddenProperty value\n                }\n                emailListeners {\n                    goid name checksum \n                    enabled serverType hostname port folder deleteOnReceive username password hardwiredServiceName sslEnabled pollInterval sizeLimit \n                    properties { name value }\n                }\n                fips {\n                    goid name checksum \n                    enableCredentialTypeSaml enableCredentialTypeX509 certificateValidation \n                    certificateReferences { \n                        goid name subjectDn thumbprintSha1 checksum \n                        verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n                        revocationCheckPolicy { goid name } \n                        notBefore notAfter certBase64 \n                    }\n                }\n                fipGroups {\n                    goid name providerName checksum \n                    description \n                    members { \n                        goid name login providerName checksum \n                        subjectDn certBase64 firstName lastName email \n                    }\n                }\n                fipUsers {\n                    goid name login providerName checksum \n                    subjectDn certBase64 firstName lastName email \n                    memberOf { \n                        goid name providerName checksum \n                        description \n                    }\n                }\n                internalGroups {\n                    goid name checksum \n                    description \n                    members { \n                        goid name login checksum \n                        enabled password certBase64 firstName lastName email \n                    }\n                }\n                internalUsers {\n                    goid name login checksum \n                    enabled password certBase64 firstName lastName email \n                    memberOf { goid name checksum description }\n                }\n                jdbcConnections {\n                    goid name checksum \n                    enabled driverClass jdbcUrl username password minPoolSize maxPoolSize \n                    properties { name value }\n                }\n                jmsDestinations {\n                    goid connectionGoid name direction providerType checksum \n                    enabled template initialContextFactoryClassname connectionFactoryName jndiUrl jndiUsername jndiPassword \n                    jndiSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n                    destinationType destinationName destinationUsername destinationPassword \n                    destinationSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n                    properties { name value }\n                }\n                keys {\n                    goid keystoreId alias checksum \n                    keyType subjectDn p12 certChain\n                }\n                ldaps {\n                    goid name checksum \n                    ldapUrls ldapsClientAuthEnabled ldapsClientKeystoreId ldapsClientKeyAlias searchBase writable bindDn bindPassword \n                    userMappings { objClass nameAttrName loginAttrName passwdAttrName firstNameAttrName lastNameAttrName emailNameAttrName kerberosAttrName kerberosEnterpriseAttrName userCertAttrName passwdType { val } } \n                    groupMappings { objClass nameAttrName memberAttrName memberStrategy { val } }\n                }\n                listenPorts {\n                    goid name checksum \n                    enabled protocol port hardwiredServiceName enabledFeatures \n                    tlsSettings { clientAuthentication keystoreId keyAlias tlsVersions cipherSuites useCipherSuitesOrder } \n                    properties { name value }\n                }\n                schemas {\n                    goid systemId checksum \n                    targetNs description content\n                }\n                secrets {\n                    goid name checksum \n                    description secret secretType variableReferencable\n                }\n                serverModuleFiles {\n                    goid name checksum \n                    moduleType moduleSha256 signature signerCertBase64 \n                    properties { name value } \n                    moduleStates { nodeId nodeName state description } \n                    moduleStateSummary { state description }\n                }\n                smConfigs {\n                    goid name checksum \n                    enabled agentHost agentIP agentHostConfig agentSecret cryptoMode ipCheckEnabled updateSSOToken clusterFailoverThreshold nonClusterFailover username securePasswordName \n                    properties { name value }\n                }\n                trustedCerts {\n                    goid name subjectDn thumbprintSha1 checksum \n                    verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n                    revocationCheckPolicy { goid name } \n                    notBefore notAfter certBase64\n                }\n            }\n        }\n    }\n}",
+								"variables": "{\n    \"resolutionPath\" : \"/some-webapi\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{source_gw}}",
+							"host": [
+								"{{source_gw}}"
+							]
+						},
+						"description": "# Graph Bundle All\n\nThis gets all configuration entities in one graphman query."
+					},
+					"response": []
 				},
 				{
-					"name": "All services and policies",
-					"item": [
+					"name": "Folder with Dependencies - Create bundle",
+					"event": [
 						{
-							"name": "Create Bundle",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const outpackage = {};",
-											"outpackage.clusterProperties = [];",
-											"outpackage.jdbcConnections = [];",
-											"outpackage.trustedCerts = [];",
-											"outpackage.policyFragments = [];",
-											"outpackage.encassConfigs = [];",
-											"outpackage.schemas = [];",
-											"outpackage.dtds = [];",
-											"outpackage.webApiServices = [];",
-											"outpackage.soapServices = [];",
-											"outpackage.internalGroups = [];",
-											"outpackage.ldaps = [];",
-											"outpackage.fips = [];",
-											"outpackage.fipGroups = [];",
-											"outpackage.internalUsers = [];",
-											"outpackage.fipUsers = [];",
-											"outpackage.keys = [];",
-											"outpackage.secrets = [];",
-											"",
-											"function processPolicyDependencies(policy) {",
-											"    const dependencies = policy.allDependencies;",
-											"    if (dependencies) {",
-											"        processParent(dependencies);",
-											"        delete policy.allDependencies;",
-											"    }",
-											"}",
-											"function processSingleEntity(item, target) {",
-											"    if (item.policy) processPolicyDependencies(item.policy);",
-											"    // special case for soap",
-											"    if (item.resolvers) {",
-											"        if (item.resolvers.resolutionPath) {",
-											"            item.resolutionPath = item.resolvers.resolutionPath",
-											"        }",
-											"        // drop resolvers which doesnt belong in mutation",
-											"        delete item.resolvers;",
-											"    }",
-											"    target.push(item);",
-											"}",
-											"function processParent(bundleEntitiesParent) {",
-											"    var keys = Object.keys(bundleEntitiesParent);",
-											"    var entries = Object.values(bundleEntitiesParent);",
-											"    for (var i = 0; i < keys.length; i++) {",
-											"        var reportTarget = null;",
-											"        if (keys[i].startsWith(\"webApiService\")) {",
-											"            reportTarget = outpackage.webApiServices;",
-											"        } else if (keys[i].startsWith(\"soapService\")) {",
-											"            reportTarget = outpackage.soapServices;",
-											"        } else if (keys[i].startsWith(\"policyFragment\")) {",
-											"            reportTarget = outpackage.policyFragments;",
-											"        } else if (keys[i].startsWith(\"encassConfig\")) {",
-											"            reportTarget = outpackage.encassConfigs;",
-											"        } else if (keys[i].startsWith(\"trustedCert\")) {",
-											"            reportTarget = outpackage.trustedCerts;",
-											"        } else if (keys[i].startsWith(\"clusterPropert\")) { // on purpose to catch both singular and plural",
-											"            reportTarget = outpackage.clusterProperties;",
-											"        } else if (keys[i].startsWith(\"jdbcConnection\")) {",
-											"            reportTarget = outpackage.jdbcConnections;",
-											"        } else if (keys[i].startsWith(\"dtd\")) {",
-											"            reportTarget = outpackage.dtds;",
-											"        } else if (keys[i].startsWith(\"schema\")) {",
-											"            reportTarget = outpackage.schemas;",
-											"        } else if (keys[i].startsWith(\"fipGroup\")) {",
-											"            reportTarget = outpackage.fipGroups;",
-											"        } else if (keys[i].startsWith(\"fipUser\")) {",
-											"            reportTarget = outpackage.fipUsers;",
-											"        } else if (keys[i].startsWith(\"fip\")) {",
-											"            reportTarget = outpackage.fips;",
-											"        } else if (keys[i].startsWith(\"internalGroup\")) {",
-											"            reportTarget = outpackage.internalGroups;",
-											"        } else if (keys[i].startsWith(\"internalUser\")) {",
-											"            reportTarget = outpackage.internalUsers;",
-											"        } else if (keys[i].startsWith(\"ldap\")) {",
-											"            reportTarget = outpackage.ldaps;",
-											"        } else if (keys[i].startsWith(\"key\")) {",
-											"            reportTarget = outpackage.keys;",
-											"        } else if (keys[i].startsWith(\"secret\")) {",
-											"            reportTarget = outpackage.secrets;",
-											"        } else {",
-											"            console.error(\"Unrecognized \" + keys[i]);",
-											"        }",
-											"",
-											"        if (reportTarget) {",
-											"            if (Array.isArray(entries[i])) {",
-											"                var arrayEntries = entries[i];",
-											"                for (var j = 0; j < arrayEntries.length; j++) {",
-											"                    processSingleEntity(arrayEntries[j], reportTarget);",
-											"                }",
-											"            } else {",
-											"                processSingleEntity(entries[i], reportTarget);",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"let root=pm.response.json();",
-											"if (!root.data) {",
-											"    throw \"Input does not seem to be graphql response\";",
-											"}",
-											"processParent(root.data);",
-											"",
-											"// cleanup bundle of empty sections",
-											"const keys = Object.keys(outpackage);",
-											"for (var i = 0; i < keys.length; i++)  {",
-											"    const prop = outpackage[keys[i]];",
-											"    if (prop) {",
-											"        if (Array.isArray(prop)) {",
-											"            if (prop.length < 1) delete outpackage[keys[i]];",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"pm.environment.set(\"bundle_all_services_policies\", JSON.stringify(outpackage, null, 2));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query servicesAndPolicies {\n    policyFragments {\n        name\n        checksum\n        folderPath\n        policy {\n            xml\n        }\n        guid\n    }\n    webApiServices {\n        name\n        checksum\n        resolutionPath\n        folderPath\n        policy {\n            xml\n        }\n        enabled\n        methodsAllowed\n    }\n    soapServices {\n        name\n        checksum\n        folderPath\n        resolvers {\n            resolutionPath\n        }\n        wsdl\n        wssProcessingEnabled\n        enabled\n        methodsAllowed\n        policy {\n          xml\n        }\n    }\n    backgroundTaskPolicies {\n       name\n       folderPath\n       guid\n       policy {\n           xml\n       }\n       checksum\n   }\n   globalPolicies {\n       name\n       tag\n       folderPath\n       policy {\n           xml\n       }\n       guid\n       goid\n       checksum\n   }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# List all Web Api Services\n\nList all of the services\n\nInput: no input"
-							},
-							"response": []
-						},
-						{
-							"name": "Apply bundle",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "mutation applyBundle ($clusterProperties: [ClusterPropertyInput!]!=[],\n        $webApiServices: [WebApiServiceInput!]!=[],\n        $encassConfigs:[EncassConfigInput!]!=[],\n        $trustedCerts:[TrustedCertInput!]!=[],\n        $dtds:[DtdInput!]!=[],\n        $schemas:[SchemaInput!]!=[],\n        $jdbcConnections:[JdbcConnectionInput!]!=[],\n        $soapServices:[SoapServiceInput!]!=[],\n        $policyFragments: [PolicyFragmentInput!]!=[],\n        $fips:[FipInput!]!=[],\n        $ldaps:[LdapInput!]!=[],\n        $fipGroups:[FipGroupInput!]!=[],\n        $internalGroups:[InternalGroupInput!]!=[],\n        $fipUsers:[FipUserInput!]!=[],\n        $internalUsers:[InternalUserInput!]!=[],\n        $keys: [KeyInput!]!=[],\n        $secrets: [SecretInput!]!=[],\n        $cassandraConnections:[CassandraConnectionInput!]!=[],\n        $jmsDestinations:[JmsDestinationInput!]!=[],\n        $globalPolicies:[GlobalPolicyInput!]!=[],\n        $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n        $scheduledTasks:[ScheduledTaskInput!]!=[]) {\n    setClusterProperties (input: $clusterProperties){clusterProperties {goid}}\n    setTrustedCerts (input: $trustedCerts){trustedCerts {goid}}\n    setSchemas (input: $schemas){schemas {goid}}\n    setDtds (input: $dtds){dtds {goid}}\n    setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid}}\n    setFips (input: $fips){fips{goid}}\n    setLdaps (input: $ldaps){ldaps{goid}}\n    setFipGroups (input: $fipGroups){fipGroups{goid}}\n    setInternalGroups (input: $internalGroups){internalGroups{goid}}\n    setFipUsers (input: $fipUsers){fipUsers{goid}}\n    setInternalUsers (input: $internalUsers){internalUsers{goid}}\n    setKeys (input: $keys) {keys {alias}}\n    setSecrets (input: $secrets){secrets{name}}\n    setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid}}\n    setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid}}\n    setPolicyFragments (input: $policyFragments){policyFragments {goid}}\n    setEncassConfigs (input: $encassConfigs){encassConfigs {goid}}\n    setGlobalPolicies (input: $globalPolicies){globalPolicies {goid}}\n    setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid}}\n    setWebApiServices (input: $webApiServices){webApiServices {goid}}\n    setSoapServices (input: $soapServices){soapServices {goid}}\n    setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid}}\n}",
-										"variables": "{{bundle_all_services_policies}}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "# Apply bundle\n\nApplies the bundle that is recorded in the environment variable by the previous call (Create Bundle). Make sure you are using the same postman environment between those two calls."
-							},
-							"response": []
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"const meta = JSON.parse(pm.collectionVariables.get(\"meta\"));",
+									"const bundle = pm.response.json();",
+									"if (!bundle.data) throw \"Input does not seem to be a valid response\";",
+									"",
+									"normalize(bundle.data);",
+									"delete bundle.data;",
+									"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));",
+									"",
+									"function metaKey(key) {",
+									"    for(var prop in meta) if (key.startsWith(meta[prop].prefix)) return prop;",
+									"    return key;",
+									"}",
+									"",
+									"function normalize(data) {",
+									"    Object.entries(data).forEach(([key, value]) => {",
+									"        const mkey = metaKey(key);",
+									"        let target = bundle[mkey];",
+									"        if (!target) target = bundle[mkey] = [];",
+									"",
+									"        if (Array.isArray(value)) value.forEach(item => target.push(item));",
+									"        else target.push(value);",
+									"",
+									"        target.filter(item => item.allDependencies).forEach(item => normalize(item.allDependencies, bundle));",
+									"        target.filter(item => item.directDependencies).forEach(item => normalize(item.directDependencies, bundle));",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
-					"description": "Bundle all services and policies in a gateway but nothing else"
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query folderContents ($folderPath: String!) {\n    webApiServicesByFolderPath (folderPath: $folderPath) {\n        goid\n        name\n        resolutionPath\n        checksum\n\n        enabled\n        folderPath\n        methodsAllowed\n        properties {name value}\n        tracingEnabled\n        wssProcessingEnabled\n\n        policy {xml}\n    }\n\n    soapServicesByFolderPath (folderPath: $folderPath) {\n        goid \n        name \n        resolutionPath \n        resolvers { soapActions baseUri resolutionPath } \n        checksum \n        \n        enabled \n        folderPath \n        soapVersion \n        methodsAllowed \n        tracingEnabled \n        wssProcessingEnabled \n        laxResolution \n        properties { name value } \n        wsdl \n        policy { xml }\n    }\n\n    internalWebApiServicesByFolderPath (folderPath: $folderPath) {\n        goid\n        name\n        resolutionPath\n        checksum\n\n        enabled\n        folderPath\n        methodsAllowed\n        properties {name value}\n        tracingEnabled\n        wssProcessingEnabled\n\n        policy {xml}\n    }\n\n    internalSoapServicesByFolderPath (folderPath: $folderPath) {\n        goid \n        name \n        resolutionPath \n        resolvers { soapActions baseUri resolutionPath } \n        checksum \n        \n        enabled \n        folderPath \n        soapVersion \n        methodsAllowed \n        tracingEnabled \n        wssProcessingEnabled \n        laxResolution \n        properties { name value } \n        wsdl \n        policy { xml }\n    }\n\n    policyFragmentsByFolderPath (folderPath: $folderPath) {\n        goid \n        guid \n        name \n        checksum \n        \n        folderPath \n        soap\n        policy { xml }\n    }\n\n    globalPoliciesByFolderPath (folderPath: $folderPath) {\n        goid \n        guid \n        name \n        tag \n        checksum \n        \n        folderPath \n        policy { xml }\n    }\n\n    backgroundTaskPoliciesByFolderPath (folderPath: $folderPath) {\n        goid \n        guid \n        name \n        checksum \n        \n        folderPath \n        soap \n        policy { xml }\n    }\n\n}",
+								"variables": "{\n    \"folderPath\": \"/some-folder\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{source_gw}}",
+							"host": [
+								"{{source_gw}}"
+							]
+						},
+						"description": "# Folder and sub-folders bundle\n\nThis graphman queries retrieves all services and policies in a folder and its subfolders.\n\nThe script in Tests (running post-request) produces an applicable bundle from the graphman response. This bundle is persisted in an environment variable.\n\nInput:\n\nSee Body, GraphQL Variables. Set folderPath: the folderPath containing the services and policies you want to package."
+					},
+					"response": []
 				},
 				{
-					"name": "Service and dependencies",
-					"item": [
+					"name": "Everything - Create Bundle",
+					"event": [
 						{
-							"name": "Create bundle",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const outpackage = {};",
-											"outpackage.clusterProperties = [];",
-											"outpackage.jdbcConnections = [];",
-											"outpackage.trustedCerts = [];",
-											"outpackage.policyFragments = [];",
-											"outpackage.encassConfigs = [];",
-											"outpackage.schemas = [];",
-											"outpackage.dtds = [];",
-											"outpackage.webApiServices = [];",
-											"outpackage.soapServices = [];",
-											"outpackage.internalGroups = [];",
-											"outpackage.ldaps = [];",
-											"outpackage.fips = [];",
-											"outpackage.fipGroups = [];",
-											"outpackage.internalUsers = [];",
-											"outpackage.fipUsers = [];",
-											"outpackage.keys = [];",
-											"outpackage.secrets = [];",
-											"",
-											"function processPolicyDependencies(policy) {",
-											"    const dependencies = policy.allDependencies;",
-											"    if (dependencies) {",
-											"        processParent(dependencies);",
-											"        delete policy.allDependencies;",
-											"    }",
-											"}",
-											"function processSingleEntity(item, target) {",
-											"    if (item.policy) processPolicyDependencies(item.policy);",
-											"    // special case for soap",
-											"    if (item.resolvers) {",
-											"        if (item.resolvers.resolutionPath) {",
-											"            item.resolutionPath = item.resolvers.resolutionPath",
-											"        }",
-											"        // drop resolvers which doesnt belong in mutation",
-											"        delete item.resolvers;",
-											"    }",
-											"    target.push(item);",
-											"}",
-											"function processParent(bundleEntitiesParent) {",
-											"    var keys = Object.keys(bundleEntitiesParent);",
-											"    var entries = Object.values(bundleEntitiesParent);",
-											"    for (var i = 0; i < keys.length; i++) {",
-											"        var reportTarget = null;",
-											"        if (keys[i].startsWith(\"webApiService\")) {",
-											"            reportTarget = outpackage.webApiServices;",
-											"        } else if (keys[i].startsWith(\"soapService\")) {",
-											"            reportTarget = outpackage.soapServices;",
-											"        } else if (keys[i].startsWith(\"policyFragment\")) {",
-											"            reportTarget = outpackage.policyFragments;",
-											"        } else if (keys[i].startsWith(\"encassConfig\")) {",
-											"            reportTarget = outpackage.encassConfigs;",
-											"        } else if (keys[i].startsWith(\"trustedCert\")) {",
-											"            reportTarget = outpackage.trustedCerts;",
-											"        } else if (keys[i].startsWith(\"clusterPropert\")) { // on purpose to catch both singular and plural",
-											"            reportTarget = outpackage.clusterProperties;",
-											"        } else if (keys[i].startsWith(\"jdbcConnection\")) {",
-											"            reportTarget = outpackage.jdbcConnections;",
-											"        } else if (keys[i].startsWith(\"dtd\")) {",
-											"            reportTarget = outpackage.dtds;",
-											"        } else if (keys[i].startsWith(\"schema\")) {",
-											"            reportTarget = outpackage.schemas;",
-											"        } else if (keys[i].startsWith(\"fipGroup\")) {",
-											"            reportTarget = outpackage.fipGroups;",
-											"        } else if (keys[i].startsWith(\"fipUser\")) {",
-											"            reportTarget = outpackage.fipUsers;",
-											"        } else if (keys[i].startsWith(\"fip\")) {",
-											"            reportTarget = outpackage.fips;",
-											"        } else if (keys[i].startsWith(\"internalGroup\")) {",
-											"            reportTarget = outpackage.internalGroups;",
-											"        } else if (keys[i].startsWith(\"internalUser\")) {",
-											"            reportTarget = outpackage.internalUsers;",
-											"        } else if (keys[i].startsWith(\"ldap\")) {",
-											"            reportTarget = outpackage.ldaps;",
-											"        } else if (keys[i].startsWith(\"key\")) {",
-											"            reportTarget = outpackage.keys;",
-											"        } else if (keys[i].startsWith(\"secret\")) {",
-											"            reportTarget = outpackage.secrets;",
-											"        } else {",
-											"            console.error(\"Unrecognized \" + keys[i]);",
-											"        }",
-											"",
-											"        if (reportTarget) {",
-											"            if (Array.isArray(entries[i])) {",
-											"                var arrayEntries = entries[i];",
-											"                for (var j = 0; j < arrayEntries.length; j++) {",
-											"                    processSingleEntity(arrayEntries[j], reportTarget);",
-											"                }",
-											"            } else {",
-											"                processSingleEntity(entries[i], reportTarget);",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"let root=pm.response.json();",
-											"if (!root.data) {",
-											"    throw \"Input does not seem to be graphql response\";",
-											"}",
-											"processParent(root.data);",
-											"",
-											"// cleanup bundle of empty sections",
-											"const keys = Object.keys(outpackage);",
-											"for (var i = 0; i < keys.length; i++)  {",
-											"    const prop = outpackage[keys[i]];",
-											"    if (prop) {",
-											"        if (Array.isArray(prop)) {",
-											"            if (prop.length < 1) delete outpackage[keys[i]];",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"pm.environment.set(\"service_and_dependencies\", JSON.stringify(outpackage, null, 2));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query serviceWithDependencies ($resolutionPath: String!) {\n    webApiServiceByResolutionPath (resolutionPath: $resolutionPath) {\n        name\n        checksum\n        resolutionPath\n        folderPath\n        policy {\n            xml\n            allDependencies {\n              policyFragments {\n                    name\n                    checksum\n                    folderPath\n                    guid\n                    policy {\n                        xml\n                    }\n                }\n                encassConfigs {\n                    name\n                    checksum\n                    policyName\n                    guid\n                    encassArgs {\n                        name\n                        type\n                        ordinal\n                        guiLabel\n                        guiPrompt\n                    }\n                    encassResults {\n                        name\n                        type\n                    }\n                }\n                trustedCerts {\n                    name\n                    checksum\n                    certBase64\n                    verifyHostname\n                    trustAnchor\n                    trustedFor\n                    revocationCheckPolicyType\n                }\n                clusterProperties {\n                    name\n                    checksum\n                    value\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                    driverClass\n                    jdbcUrl\n                    enabled\n                    username\n                    password\n                    minPoolSize\n                    maxPoolSize\n                    properties {\n                        name\n                        value\n                    }\n                }\n                schemas {\n                    systemId\n                    checksum\n                    targetNs\n                    description\n                    content\n                }\n                dtds {\n                    systemId\n                    checksum\n                    publicId\n                    description\n                    content\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                    enableCredentialTypeX509\n                    enableCredentialTypeSaml\n                    certificateReferences {\n                        thumbprintSha1\n                    }\n                }\n                ldaps {\n                    name\n                    goid\n                    ldapUrls\n                    ldapsClientAuthEnabled\n                    ldapsClientKeyAlias\n                    searchBase\n                    writable\n                    bindDn\n                    bindPassword\n                    userMappings {\n                        objClass\n                        nameAttrName\n                        loginAttrName\n                        passwdAttrName\n                        firstNameAttrName\n                        lastNameAttrName\n                        emailNameAttrName\n                        kerberosAttrName\n                        kerberosEnterpriseAttrName\n                        userCertAttrName\n                        passwdType {\n                            val\n                        }\n                    }\n                    groupMappings {\n                        objClass\n                        nameAttrName\n                        memberAttrName\n                        memberStrategy {\n                            val\n                        }\n                    }\n                    checksum\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                    description\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                    description\n                }\n                internalUsers {\n                    name\n                    goid\n                    checksum\n                    memberOf {\n                        name\n                    }\n                    login\n                    password\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                    subjectDn\n                    memberOf {\n                        name\n                    }\n                    login\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                    p12\n                }\n                secrets {\n                    name\n                    secretType\n                    checksum\n                    goid\n                    variableReferencable\n                    secret\n                    description\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    keyspace\n                    contactPoints\n                    port\n                    username\n                    securePasswordName\n                    sslEnabled\n                    cipherSuites\n                    properties {\n                        name\n                        value\n                    }\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    connectionGoid\n                    name\n                    direction\n                    providerType\n                    initialContextFactoryClassname\n                    connectionFactoryName\n                    jndiUrl\n                    jndiUsername\n                    jndiPassword\n                    template\n                    enabled\n                    jndiSslDetails {\n                        sslEnabled\n                        sslForAuthenticationOnly\n                        sslVerifyServerCertificate\n                        sslVerifyServerHostname\n                        sslClientKeyAlias\n                    }\n                    destinationType\n                    destinationName\n                    destinationUsername\n                    destinationPassword\n                    destinationSslDetails {\n                        sslEnabled\n                        sslForAuthenticationOnly\n                        sslVerifyServerCertificate\n                        sslVerifyServerHostname\n                        sslClientKeyAlias\n                    }\n                    template\n                    enabled\n                    properties {\n                        name\n                        value\n                    }\n                    checksum\n                }\n            }\n        }\n        enabled\n        methodsAllowed\n    }\n}",
-										"variables": "{\n    \"resolutionPath\" : \"/restApi1\"\n}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# Graph Bundle All\n\nThis gets all configuration entities in one graphman query."
-							},
-							"response": []
-						},
-						{
-							"name": "Apply bundle",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "mutation applyBundle ($clusterProperties: [ClusterPropertyInput!]!=[],\n        $webApiServices: [WebApiServiceInput!]!=[],\n        $encassConfigs:[EncassConfigInput!]!=[],\n        $trustedCerts:[TrustedCertInput!]!=[],\n        $dtds:[DtdInput!]!=[],\n        $schemas:[SchemaInput!]!=[],\n        $jdbcConnections:[JdbcConnectionInput!]!=[],\n        $soapServices:[SoapServiceInput!]!=[],\n        $policyFragments: [PolicyFragmentInput!]!=[],\n        $fips:[FipInput!]!=[],\n        $ldaps:[LdapInput!]!=[],\n        $fipGroups:[FipGroupInput!]!=[],\n        $internalGroups:[InternalGroupInput!]!=[],\n        $fipUsers:[FipUserInput!]!=[],\n        $internalUsers:[InternalUserInput!]!=[],\n        $keys: [KeyInput!]!=[],\n        $secrets: [SecretInput!]!=[],\n        $cassandraConnections:[CassandraConnectionInput!]!=[],\n        $jmsDestinations:[JmsDestinationInput!]!=[],\n        $globalPolicies:[GlobalPolicyInput!]!=[],\n        $backgroundTaskPolicies:[BackgroundTaskPolicyInput!]!=[],\n        $scheduledTasks:[ScheduledTaskInput!]!=[]) {\n    setClusterProperties (input: $clusterProperties){clusterProperties {goid}}\n    setTrustedCerts (input: $trustedCerts){trustedCerts {goid}}\n    setSchemas (input: $schemas){schemas {goid}}\n    setDtds (input: $dtds){dtds {goid}}\n    setJdbcConnections (input: $jdbcConnections){jdbcConnections {goid}}\n    setFips (input: $fips){fips{goid}}\n    setLdaps (input: $ldaps){ldaps{goid}}\n    setFipGroups (input: $fipGroups){fipGroups{goid}}\n    setInternalGroups (input: $internalGroups){internalGroups{goid}}\n    setFipUsers (input: $fipUsers){fipUsers{goid}}\n    setInternalUsers (input: $internalUsers){internalUsers{goid}}\n    setKeys (input: $keys) {keys {alias}}\n    setSecrets (input: $secrets){secrets{name}}\n    setCassandraConnections (input: $cassandraConnections){cassandraConnections {goid}}\n    setJmsDestinations (input: $jmsDestinations){jmsDestinations {goid}}\n    setPolicyFragments (input: $policyFragments){policyFragments {goid}}\n    setEncassConfigs (input: $encassConfigs){encassConfigs {goid}}\n    setGlobalPolicies (input: $globalPolicies){globalPolicies {goid}}\n    setBackgroundTaskPolicies (input: $backgroundTaskPolicies){backgroundTaskPolicies {goid}}\n    setWebApiServices (input: $webApiServices){webApiServices {goid}}\n    setSoapServices (input: $soapServices){soapServices {goid}}\n    setScheduledTasks (input: $scheduledTasks){scheduledTasks {goid}}\n}",
-										"variables": "{{service_and_dependencies}}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "# Apply bundle\n\nApplies the bundle that is recorded in the environment variable by the previous call (Create Bundle). Make sure you are using the same postman environment between those two calls."
-							},
-							"response": []
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"const meta = JSON.parse(pm.collectionVariables.get(\"meta\"));",
+									"const bundle = pm.response.json();",
+									"if (!bundle.data) throw \"Input does not seem to be a valid response\";",
+									"",
+									"normalize(bundle.data);",
+									"delete bundle.data;",
+									"pm.environment.set(\"source_bundle\", JSON.stringify(bundle, null, 2));",
+									"",
+									"function metaKey(key) {",
+									"    for(var prop in meta) if (key.startsWith(meta[prop].prefix)) return prop;",
+									"    return key;",
+									"}",
+									"",
+									"function normalize(data) {",
+									"    Object.entries(data).forEach(([key, value]) => {",
+									"        const mkey = metaKey(key);",
+									"        let target = bundle[mkey];",
+									"        if (!target) target = bundle[mkey] = [];",
+									"",
+									"        if (Array.isArray(value)) value.forEach(item => target.push(item));",
+									"        else target.push(value);",
+									"",
+									"        target.filter(item => item.allDependencies).forEach(item => normalize(item.allDependencies, bundle));",
+									"        target.filter(item => item.directDependencies).forEach(item => normalize(item.directDependencies, bundle));",
+									"    });",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query everything {\n    webApiServices {\n        goid name resolutionPath checksum \n        enabled folderPath methodsAllowed tracingEnabled wssProcessingEnabled \n        properties { name value }\n        policy { xml }\n    }\n    soapServices {\n        goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum \n        enabled folderPath soapVersion methodsAllowed tracingEnabled wssProcessingEnabled laxResolution \n        properties { name value }\n        wsdl \n        policy { xml }\n    }\n    internalWebApiServices {\n        goid name resolutionPath checksum \n        enabled folderPath methodsAllowed tracingEnabled wssProcessingEnabled \n        properties { name value } \n        policy { xml }\n    }\n    internalSoapServices {\n        goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum \n        enabled folderPath soapVersion methodsAllowed tracingEnabled wssProcessingEnabled laxResolution \n        properties { name value } \n        wsdl \n        policy { xml }\n    }\n    encassConfigs {\n        goid guid name checksum \n        description policyName \n        encassArgs { name type ordinal guiPrompt guiLabel } \n        encassResults{ name type } \n        properties { name value }\n    }\n    globalPolicies {\n        goid guid name tag checksum \n        folderPath \n        policy { xml }\n    }\n    backgroundTaskPolicies {\n        goid guid name checksum \n        folderPath soap \n        policy { xml }\n    }\n    policyFragments {\n        goid guid name checksum \n        folderPath soap \n        policy { xml }\n    }\n\n    activeConnectors {\n        goid name checksum \n        enabled connectorType hardwiredServiceName \n        properties { name value } \n        advancedProperties { name value }\n    }\n    dtds {\n        goid systemId checksum \n        publicId description content\n    }\n    cassandraConnections {\n        goid name checksum \n        enabled keyspace contactPoints port compression username securePasswordName sslEnabled cipherSuites \n        properties { name value }\n    }\n    clusterProperties {\n        goid name checksum \n        description hiddenProperty value\n    }\n    emailListeners {\n        goid name checksum \n        enabled serverType hostname port folder deleteOnReceive username password hardwiredServiceName sslEnabled pollInterval sizeLimit \n        properties { name value }\n    }\n    fips {\n        goid name checksum \n        enableCredentialTypeSaml enableCredentialTypeX509 certificateValidation \n        certificateReferences { \n             goid name subjectDn thumbprintSha1 checksum \n             verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n             revocationCheckPolicy { goid name } \n             notBefore notAfter certBase64 \n        }\n    }\n    fipGroups {\n        goid name providerName checksum \n        description \n        members { \n            goid name login providerName checksum \n            subjectDn certBase64 firstName lastName email \n        }\n    }\n    fipUsers {\n        goid name login providerName checksum \n        subjectDn certBase64 firstName lastName email \n        memberOf { \n            goid name providerName checksum \n            description \n        }\n    }\n    internalDtds {\n        goid systemId checksum \n        publicId description content\n    }\n    internalGroups {\n        goid name checksum \n        description \n        members { \n            goid name login checksum \n            enabled password certBase64 firstName lastName email \n        }\n    }\n    internalSchemas {\n        goid systemId checksum \n        targetNs description content\n    }\n    internalUsers {\n         goid name login checksum \n         enabled password certBase64 firstName lastName email \n         memberOf { goid name checksum description }\n    }\n    jdbcConnections {\n         goid name checksum \n         enabled driverClass jdbcUrl username password minPoolSize maxPoolSize \n         properties { name value }\n    }\n    jmsDestinations {\n         goid connectionGoid name direction providerType checksum \n         enabled template initialContextFactoryClassname connectionFactoryName jndiUrl jndiUsername jndiPassword \n         jndiSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n         destinationType destinationName destinationUsername destinationPassword \n         destinationSslDetails { sslEnabled sslForAuthenticationOnly sslVerifyServerCertificate sslVerifyServerHostname sslClientKeyAlias } \n         properties { name value }\n    }\n    keys {\n         goid keystoreId alias checksum \n         keyType subjectDn p12 certChain\n    }\n    ldaps {\n        goid name checksum \n        ldapUrls ldapsClientAuthEnabled ldapsClientKeystoreId ldapsClientKeyAlias searchBase writable bindDn bindPassword \n        userMappings { objClass nameAttrName loginAttrName passwdAttrName firstNameAttrName lastNameAttrName emailNameAttrName kerberosAttrName kerberosEnterpriseAttrName userCertAttrName passwdType { val } } \n        groupMappings { objClass nameAttrName memberAttrName memberStrategy { val } }\n    }\n    listenPorts {\n         goid name checksum \n         enabled protocol port hardwiredServiceName enabledFeatures \n         tlsSettings { clientAuthentication keystoreId keyAlias tlsVersions cipherSuites useCipherSuitesOrder } \n         properties { name value }\n    }\n    scheduledTasks {\n         goid name checksum \n         policyName jobType cronExpression executeOnSingleNode executeOnCreation executionDate status runAsUser runAsUserProviderName\n    }\n    schemas {\n         goid systemId checksum \n         targetNs description content\n    }\n    secrets {\n         goid name checksum \n         description secret secretType variableReferencable\n    }\n    serverModuleFiles {\n        goid name checksum \n        moduleType moduleSha256 signature signerCertBase64 \n        properties { name value } \n        moduleStates { nodeId nodeName state description } \n        moduleStateSummary { state description }\n    }\n    smConfigs {\n        goid name checksum \n        enabled agentHost agentIP agentHostConfig agentSecret cryptoMode ipCheckEnabled updateSSOToken clusterFailoverThreshold nonClusterFailover username securePasswordName \n        properties { name value }\n    }\n    trustedCerts {\n         goid name subjectDn thumbprintSha1 checksum \n         verifyHostname trustAnchor trustedFor revocationCheckPolicyType \n         revocationCheckPolicy { goid name } \n         notBefore notAfter certBase64\n    }\n}",
+								"variables": "{}"
+							}
+						},
+						"url": {
+							"raw": "{{source_gw}}",
+							"host": [
+								"{{source_gw}}"
+							]
+						},
+						"description": "# Graph Bundle All\n\nThis gets all configuration entities in one graphman query."
+					},
+					"response": []
+				},
+				{
+					"name": "Source Gateway - Summary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const summary = pm.response.json();",
+									"pm.environment.set(\"source_summary\", JSON.stringify(summary.data, null, 2));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query summary {\n    webApiServices {\n         goid name resolutionPath checksum\n    }\n    soapServices {\n         goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum\n    }\n    internalWebApiServices {\n         goid name resolutionPath checksum\n    }\n    internalSoapServices {\n         goid resolutionPath checksum\n    }\n    encassConfigs {\n         goid guid name checksum\n    }\n    globalPolicies {\n         goid guid name tag checksum\n    }\n    backgroundTaskPolicies {\n         goid guid name checksum\n    }\n    policyFragments {\n         goid guid name checksum\n    }\n\n    activeConnectors {\n         goid name checksum\n    }\n    cassandraConnections {\n         goid name checksum\n    }\n    clusterProperties {\n         goid name checksum\n    }\n    dtds {\n         goid systemId checksum\n    }\n    emailListeners {\n         goid name checksum\n    }\n    fips {\n         goid name checksum\n    }\n    fipGroups {\n         goid name providerName checksum\n    }\n    fipUsers {\n         goid name providerName checksum\n    }\n    internalDtds {\n         goid systemId checksum\n    }\n    internalGroups {\n         goid name checksum\n    }\n    internalSchemas {\n         goid systemId checksum\n    }\n    internalUsers {\n         goid name login checksum\n    }\n    jdbcConnections {\n         goid name checksum\n    }\n    jmsDestinations {\n         goid connectionGoid name direction providerType checksum\n    }\n    keys {\n         goid keystoreId alias checksum\n    }\n    ldaps {\n         goid name checksum\n    }\n    listenPorts {\n         goid name checksum\n    }\n    scheduledTasks {\n         goid name checksum\n    }\n    schemas {\n         goid systemId checksum\n    }\n    secrets {\n         goid name checksum\n    }\n    serverModuleFiles {\n         goid name checksum\n    }\n    smConfigs {\n         goid name checksum\n    }\n    trustedCerts {\n         goid name subjectDn thumbprintSha1 checksum\n    }\n}",
+								"variables": "{}"
+							}
+						},
+						"url": {
+							"raw": "{{source_gw}}",
+							"host": [
+								"{{source_gw}}"
+							]
+						},
+						"description": "Summary of source\n\nUse as-is except for the target. This produces a summary of all the configuration."
+					},
+					"response": []
+				},
+				{
+					"name": "Target Gateway - Summary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const summary = pm.response.json();",
+									"pm.environment.set(\"target_summary\", JSON.stringify(summary.data, null, 2));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query summary {\n    webApiServices {\n         goid name resolutionPath checksum\n    }\n    soapServices {\n         goid name resolutionPath resolvers { soapActions baseUri resolutionPath } checksum\n    }\n    internalWebApiServices {\n         goid name resolutionPath checksum\n    }\n    internalSoapServices {\n         goid resolutionPath checksum\n    }\n    encassConfigs {\n         goid guid name checksum\n    }\n    globalPolicies {\n         goid guid name tag checksum\n    }\n    backgroundTaskPolicies {\n         goid guid name checksum\n    }\n    policyFragments {\n         goid guid name checksum\n    }\n\n    activeConnectors {\n         goid name checksum\n    }\n    cassandraConnections {\n         goid name checksum\n    }\n    clusterProperties {\n         goid name checksum\n    }\n    dtds {\n         goid systemId checksum\n    }\n    emailListeners {\n         goid name checksum\n    }\n    fips {\n         goid name checksum\n    }\n    fipGroups {\n         goid name providerName checksum\n    }\n    fipUsers {\n         goid name providerName checksum\n    }\n    internalDtds {\n         goid systemId checksum\n    }\n    internalGroups {\n         goid name checksum\n    }\n    internalSchemas {\n         goid systemId checksum\n    }\n    internalUsers {\n         goid name login checksum\n    }\n    jdbcConnections {\n         goid name checksum\n    }\n    jmsDestinations {\n         goid connectionGoid name direction providerType checksum\n    }\n    keys {\n         goid keystoreId alias checksum\n    }\n    ldaps {\n         goid name checksum\n    }\n    listenPorts {\n         goid name checksum\n    }\n    scheduledTasks {\n         goid name checksum\n    }\n    schemas {\n         goid systemId checksum\n    }\n    secrets {\n         goid name checksum\n    }\n    serverModuleFiles {\n         goid name checksum\n    }\n    smConfigs {\n         goid name checksum\n    }\n    trustedCerts {\n         goid name subjectDn thumbprintSha1 checksum\n    }\n}",
+								"variables": "{}"
+							}
+						},
+						"url": {
+							"raw": "{{target_gw}}",
+							"host": [
+								"{{target_gw}}"
+							]
+						},
+						"description": "Summary of target\n\nUse as-is except for the target. This produces a summary of all the configuration."
+					},
+					"response": []
 				}
 			],
 			"description": "# Bundles and Migration\n\nThis folder contains the creation and application of configuration bundles that are created according to different bundling strategies:\n\n1.  a service bundled with all its dependencies\n2.  services and policies in a folder and all its sub-folders\n3.  a policy bundled with all its dependencies"
@@ -1965,6 +1525,242 @@
 					"name": "Identity Providers",
 					"item": [
 						{
+							"name": "Mutations",
+							"item": [
+								{
+									"name": "Set Fips",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setFips ($input: [FipInput!]!) {\n    setFips (input: $input) {\n        detailedStatus{status description}\n        fips {\n            goid\n            name\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Foo2\",\n                \"checksum\": \"46994bf282abf9d6e3640b88f70ced716a2e361d\",\n                \"enableCredentialTypeX509\": false,\n                \"enableCredentialTypeSaml\": true,\n                \"certificateReferences\": [\n                    {\n                        \"thumbprintSha1\": \"boRxUgf35aj2SUf0fjT6MkGiKv8=\"\n                    }\n                ]\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Set Ldaps",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setLdaps ($input: [LdapInput!]!) {\n    setLdaps (input: $input) {\n        ldaps {\n            name\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n     {\n                \"name\": \"example ldap2\",\n                \"goid\": \"62a6996e5adf7374d43434e9bc080dd0\",\n                \"ldapUrls\": [\n                    \"ldap://ldap.forumsys.com\"\n                ],\n                \"ldapsClientAuthEnabled\": false,\n                \"searchBase\": \"dc=example,dc=com\",\n                \"writable\": false,\n                \"bindDn\": \"cn=read-only-admin,dc=example,dc=com\",\n                \"bindPassword\": \"password\",\n                \"userMappings\": [\n                    {\n                        \"objClass\": \"inetOrgPerson\",\n                        \"nameAttrName\": \"cn\",\n                        \"loginAttrName\": \"uid\",\n                        \"passwdAttrName\": \"userPassword\",\n                        \"firstNameAttrName\": \"givenName\",\n                        \"lastNameAttrName\": \"sn\",\n                        \"emailNameAttrName\": \"mail\",\n                        \"kerberosAttrName\": \"uid\",\n                        \"userCertAttrName\": \"userCertificate;binary\",\n                        \"passwdType\": {\n                            \"val\": 0\n                        }\n                    }\n                ],\n                \"groupMappings\": [\n                    {\n                        \"objClass\": \"posixGroup\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"memberUid\",\n                        \"memberStrategy\": {\n                            \"val\": 1\n                        }\n                    },\n                    {\n                        \"objClass\": \"groupOfUniqueNames\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"uniqueMember\",\n                        \"memberStrategy\": {\n                            \"val\": 2\n                        }\n                    },\n                    {\n                        \"objClass\": \"organizationalUnit\",\n                        \"nameAttrName\": \"ou\",\n                        \"memberAttrName\": \"\",\n                        \"memberStrategy\": {\n                            \"val\": 3\n                        }\n                    }\n                ],\n                \"checksum\": \"cf7a2db154a643aae8980570da1289de0e995f56\"\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete IdP",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation deleteIdp($name: String!) {\n  deleteIdp(name: $name) {\n    deleted\n  }\n}",
+												"variables": "{\n    \"name\": \"example ldap2\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Set Internal Users",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setInternalUsers ($input: [InternalUserInput!]!) {\n    setInternalUsers (input: $input) {\n        internalUsers {\n            name\n            memberOf{name}\n            password\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"somebody\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"memberOf\": [\n                    {\n                        \"name\": \"banana_users\"\n                    }\n                ],\n                \"login\": \"banana3\",\n                \"password\": \"$6$H71tKD5zQo01csDP$aBcup/hEjs1FDxRaJZM8POpPBp2Ge.fBd6nX/Uy7kPc4kn26VhpVj2n3ZDNM.lC6fTcr2NYO36orNoNKW7Gzx0\",\n                \"certBase64\": \"MIIGjDCCBXSgAwIBAgIJAOfLGfa8uS2BMA0GCSqGSIb3DQEBCwUAMIG0MQswCQYDVQQGEwJVUzEQ\\r\\nMA4GA1UECBMHQXJpem9uYTETMBEGA1UEBxMKU2NvdHRzZGFsZTEaMBgGA1UEChMRR29EYWRkeS5j\\r\\nb20sIEluYy4xLTArBgNVBAsTJGh0dHA6Ly9jZXJ0cy5nb2RhZGR5LmNvbS9yZXBvc2l0b3J5LzEz\\r\\nMDEGA1UEAxMqR28gRGFkZHkgU2VjdXJlIENlcnRpZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTIy\\r\\nMDMxNDE3NDkyM1oXDTIzMDQxNTE1Mzg0MVowFzEVMBMGA1UEAwwMKi5rZWxvd25hLmNhMIIBIjAN\\r\\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QCY48mBJfLCIuyJIQTwF5gikuf5B/FoGZ3LcAtv\\r\\nE9tagkS+0qDsMorwFYT93tnJFusmIVqoGUbVx7IRIWYQIzZsPUBLUEqoBYoyZJwYfsuX2XVP5XxC\\r\\noKuMQdNw/G32e2lbpcnYQ27svQ8jq9Hx+PcCxywgi8ar/jC3Bm/+NSl5IM63iiV2VFdrE74a9fmp\\r\\nN40W9uDl4du4N6PwMxc8cihn8ymiOcwFUC7R/6+4sIBFuddAMZ1J8FrOO+RSdflbOQvJYZDzFK00\\r\\n9VOC6PlxcK0IRKA450Qd3mzdHSJdLuPu38AuW394tvS9/M3ZlWQuZvqLCYIx/xpTWD7qWQ8H8QID\\r\\nAQABo4IDOzCCAzcwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw\\r\\nDgYDVR0PAQH/BAQDAgWgMDgGA1UdHwQxMC8wLaAroCmGJ2h0dHA6Ly9jcmwuZ29kYWRkeS5jb20v\\r\\nZ2RpZzJzMS0zOTIxLmNybDBdBgNVHSAEVjBUMEgGC2CGSAGG/W0BBxcBMDkwNwYIKwYBBQUHAgEW\\r\\nK2h0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5jb20vcmVwb3NpdG9yeS8wCAYGZ4EMAQIBMHYG\\r\\nCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZ29kYWRkeS5jb20vMEAGCCsG\\r\\nAQUFBzAChjRodHRwOi8vY2VydGlmaWNhdGVzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkvZ2RpZzIu\\r\\nY3J0MB8GA1UdIwQYMBaAFEDCvSeOzDSDMKIz1/tss/C0LIDOMCMGA1UdEQQcMBqCDCoua2Vsb3du\\r\\nYS5jYYIKa2Vsb3duYS5jYTAdBgNVHQ4EFgQUEF5c8gyemT/aYylYsq2gimJumOowggGABgorBgEE\\r\\nAdZ5AgQCBIIBcASCAWwBagB3AOg+0No+9QY1MudXKLyJa8kD08vREWvs62nhd31tBr1uAAABf4mM\\r\\njjMAAAQDAEgwRgIhAN+bVp1Nf4tRQ7QkUNdB3XfvN5+5zA5SeJRJRvgkN1H3AiEAwBToqUD09ySi\\r\\nMKGyNCA+gU4VpeQKEQ71YXgEQowOhdEAdwA1zxkbv7FsV78PrUxtQsu7ticgJlHqP+Eq76gDwzvW\\r\\nTAAAAX+JjI9wAAAEAwBIMEYCIQD6ZBKhSjV2bC9QBcbwdKOEHRv2wX/e61MXvLN3ePBIjgIhAP87\\r\\nK4nObHAQgrZ0RPV6ji61EHzWt0Pwjwh287Ms0zECAHYAejKMVNi3LbYg6jjgUh7phBZwMhOFTTvS\\r\\nK8E6V6NS61IAAAF/iYyP0AAABAMARzBFAiEAtgcQJurJ3g8LdvNv2juOZ3U0tyX11iNPhJ4kPsCR\\r\\niosCIEDQrcucbYu2EIlXjUecYcnrUFO7TyvBEaMh3z4//SOKMA0GCSqGSIb3DQEBCwUAA4IBAQAT\\r\\nINkwgzr+oJJAjtUxNDPn7SUuxFdiOQrmnG7/7ZDMeGQ02SLiA+ukDzXXVqOQSlrX7I306xfqou3m\\r\\nNBSbyob53W46yq9hwqYS7PjFMjinyyG3aDX6mdOPtngtO8xfslkIBaSao5EDJC5HpA0KMPAc2xW7\\r\\nlmA/bluIS7a+U0Tbvv7uaZajTRV7KlT+7N2PpNUuMr0ilvB8wZjhJHZtNU2DTvotCPCdNaxTKLLT\\r\\nZc1at2Vc8Z10VrDvGK4JnHEAS6amNWoFPEdjzpbtVVV8F7xl8bJfKE4SwrBzZn8Aq5BcIxMhL5eq\\r\\nmS1dUj/x/4GUETE7ojJYYTE/4XVNzOxjmJc0\"\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Set Internal Groups",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setInternalGroups ($input: [InternalGroupInput!]!) {\n    setInternalGroups (input: $input) {\n        internalGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"banana_users\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for  banana_users\"\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Internal User",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation deleteInternalUser($login: String!) {\n  deleteInternalUser(login: $login) {\n    deleted\n  }\n}",
+												"variables": "{\n    \"login\": \"banana3\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Internal Group",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation deleteInternalGroup($name: String!) {\n  deleteInternalGroup(name: $name) {\n    deleted\n  }\n}",
+												"variables": "{\n    \"name\": \"TestGroupFoo\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Set Fip Users",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setFipUsers ($input: [FipUserInput!]!) {\n    setFipUsers (input: $input) {\n        detailedStatus{status description}\n        fipUsers {\n            name\n            providerName\n            memberOf{name}\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Johnny\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"email\": \"johnny@dirt.com\",\n                \"memberOf\": [{\n                    \"name\": \"group1\"\n                }],\n                \"subjectDn\": \"cn=john\"\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Fip User",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation deleteFipUser($fipName: String!, $userName: String!) {\n  deleteFipUser(fipName: $fipName, userName: $userName) {\n    deleted\n  }\n}",
+												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"userName\": \"Johnny\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Set Fip Groups",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation setFipGroups ($input: [FipGroupInput!]!) {\n    setFipGroups (input: $input) {\n        detailedStatus{status description}\n        fipGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
+												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"group 1\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for Test Foo\"\n            }\n  ]\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Fip Group",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation deleteFipGroup($fipName: String!, $groupName: String!) {\n  deleteFipGroup(fipName: $fipName, groupName: $groupName) {\n    deleted\n  }\n}",
+												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"groupName\": \"TestGroupFoo\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{target_gw}}",
+											"host": [
+												"{{target_gw}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
 							"name": "Queries",
 							"item": [
 								{
@@ -2280,242 +2076,6 @@
 											"raw": "{{source_gw}}",
 											"host": [
 												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								}
-							]
-						},
-						{
-							"name": "Mutations",
-							"item": [
-								{
-									"name": "Set Fips",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setFips ($input: [FipInput!]!) {\n    setFips (input: $input) {\n        detailedStatus{status description}\n        fips {\n            goid\n            name\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Foo2\",\n                \"checksum\": \"46994bf282abf9d6e3640b88f70ced716a2e361d\",\n                \"enableCredentialTypeX509\": false,\n                \"enableCredentialTypeSaml\": true,\n                \"certificateReferences\": [\n                    {\n                        \"thumbprintSha1\": \"boRxUgf35aj2SUf0fjT6MkGiKv8=\"\n                    }\n                ]\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Ldaps",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setLdaps ($input: [LdapInput!]!) {\n    setLdaps (input: $input) {\n        ldaps {\n            name\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n     {\n                \"name\": \"example ldap2\",\n                \"goid\": \"62a6996e5adf7374d43434e9bc080dd0\",\n                \"ldapUrls\": [\n                    \"ldap://ldap.forumsys.com\"\n                ],\n                \"ldapsClientAuthEnabled\": false,\n                \"searchBase\": \"dc=example,dc=com\",\n                \"writable\": false,\n                \"bindDn\": \"cn=read-only-admin,dc=example,dc=com\",\n                \"bindPassword\": \"password\",\n                \"userMappings\": [\n                    {\n                        \"objClass\": \"inetOrgPerson\",\n                        \"nameAttrName\": \"cn\",\n                        \"loginAttrName\": \"uid\",\n                        \"passwdAttrName\": \"userPassword\",\n                        \"firstNameAttrName\": \"givenName\",\n                        \"lastNameAttrName\": \"sn\",\n                        \"emailNameAttrName\": \"mail\",\n                        \"kerberosAttrName\": \"uid\",\n                        \"userCertAttrName\": \"userCertificate;binary\",\n                        \"passwdType\": {\n                            \"val\": 0\n                        }\n                    }\n                ],\n                \"groupMappings\": [\n                    {\n                        \"objClass\": \"posixGroup\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"memberUid\",\n                        \"memberStrategy\": {\n                            \"val\": 1\n                        }\n                    },\n                    {\n                        \"objClass\": \"groupOfUniqueNames\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"uniqueMember\",\n                        \"memberStrategy\": {\n                            \"val\": 2\n                        }\n                    },\n                    {\n                        \"objClass\": \"organizationalUnit\",\n                        \"nameAttrName\": \"ou\",\n                        \"memberAttrName\": \"\",\n                        \"memberStrategy\": {\n                            \"val\": 3\n                        }\n                    }\n                ],\n                \"checksum\": \"cf7a2db154a643aae8980570da1289de0e995f56\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete IdP",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteIdp($name: String!) {\n  deleteIdp(name: $name) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"name\": \"example ldap2\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Internal Users",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setInternalUsers ($input: [InternalUserInput!]!) {\n    setInternalUsers (input: $input) {\n        internalUsers {\n            name\n            memberOf{name}\n            password\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"somebody\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"memberOf\": [\n                    {\n                        \"name\": \"banana_users\"\n                    }\n                ],\n                \"login\": \"banana3\",\n                \"password\": \"$6$H71tKD5zQo01csDP$aBcup/hEjs1FDxRaJZM8POpPBp2Ge.fBd6nX/Uy7kPc4kn26VhpVj2n3ZDNM.lC6fTcr2NYO36orNoNKW7Gzx0\",\n                \"certBase64\": \"MIIGjDCCBXSgAwIBAgIJAOfLGfa8uS2BMA0GCSqGSIb3DQEBCwUAMIG0MQswCQYDVQQGEwJVUzEQ\\r\\nMA4GA1UECBMHQXJpem9uYTETMBEGA1UEBxMKU2NvdHRzZGFsZTEaMBgGA1UEChMRR29EYWRkeS5j\\r\\nb20sIEluYy4xLTArBgNVBAsTJGh0dHA6Ly9jZXJ0cy5nb2RhZGR5LmNvbS9yZXBvc2l0b3J5LzEz\\r\\nMDEGA1UEAxMqR28gRGFkZHkgU2VjdXJlIENlcnRpZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTIy\\r\\nMDMxNDE3NDkyM1oXDTIzMDQxNTE1Mzg0MVowFzEVMBMGA1UEAwwMKi5rZWxvd25hLmNhMIIBIjAN\\r\\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QCY48mBJfLCIuyJIQTwF5gikuf5B/FoGZ3LcAtv\\r\\nE9tagkS+0qDsMorwFYT93tnJFusmIVqoGUbVx7IRIWYQIzZsPUBLUEqoBYoyZJwYfsuX2XVP5XxC\\r\\noKuMQdNw/G32e2lbpcnYQ27svQ8jq9Hx+PcCxywgi8ar/jC3Bm/+NSl5IM63iiV2VFdrE74a9fmp\\r\\nN40W9uDl4du4N6PwMxc8cihn8ymiOcwFUC7R/6+4sIBFuddAMZ1J8FrOO+RSdflbOQvJYZDzFK00\\r\\n9VOC6PlxcK0IRKA450Qd3mzdHSJdLuPu38AuW394tvS9/M3ZlWQuZvqLCYIx/xpTWD7qWQ8H8QID\\r\\nAQABo4IDOzCCAzcwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw\\r\\nDgYDVR0PAQH/BAQDAgWgMDgGA1UdHwQxMC8wLaAroCmGJ2h0dHA6Ly9jcmwuZ29kYWRkeS5jb20v\\r\\nZ2RpZzJzMS0zOTIxLmNybDBdBgNVHSAEVjBUMEgGC2CGSAGG/W0BBxcBMDkwNwYIKwYBBQUHAgEW\\r\\nK2h0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5jb20vcmVwb3NpdG9yeS8wCAYGZ4EMAQIBMHYG\\r\\nCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZ29kYWRkeS5jb20vMEAGCCsG\\r\\nAQUFBzAChjRodHRwOi8vY2VydGlmaWNhdGVzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkvZ2RpZzIu\\r\\nY3J0MB8GA1UdIwQYMBaAFEDCvSeOzDSDMKIz1/tss/C0LIDOMCMGA1UdEQQcMBqCDCoua2Vsb3du\\r\\nYS5jYYIKa2Vsb3duYS5jYTAdBgNVHQ4EFgQUEF5c8gyemT/aYylYsq2gimJumOowggGABgorBgEE\\r\\nAdZ5AgQCBIIBcASCAWwBagB3AOg+0No+9QY1MudXKLyJa8kD08vREWvs62nhd31tBr1uAAABf4mM\\r\\njjMAAAQDAEgwRgIhAN+bVp1Nf4tRQ7QkUNdB3XfvN5+5zA5SeJRJRvgkN1H3AiEAwBToqUD09ySi\\r\\nMKGyNCA+gU4VpeQKEQ71YXgEQowOhdEAdwA1zxkbv7FsV78PrUxtQsu7ticgJlHqP+Eq76gDwzvW\\r\\nTAAAAX+JjI9wAAAEAwBIMEYCIQD6ZBKhSjV2bC9QBcbwdKOEHRv2wX/e61MXvLN3ePBIjgIhAP87\\r\\nK4nObHAQgrZ0RPV6ji61EHzWt0Pwjwh287Ms0zECAHYAejKMVNi3LbYg6jjgUh7phBZwMhOFTTvS\\r\\nK8E6V6NS61IAAAF/iYyP0AAABAMARzBFAiEAtgcQJurJ3g8LdvNv2juOZ3U0tyX11iNPhJ4kPsCR\\r\\niosCIEDQrcucbYu2EIlXjUecYcnrUFO7TyvBEaMh3z4//SOKMA0GCSqGSIb3DQEBCwUAA4IBAQAT\\r\\nINkwgzr+oJJAjtUxNDPn7SUuxFdiOQrmnG7/7ZDMeGQ02SLiA+ukDzXXVqOQSlrX7I306xfqou3m\\r\\nNBSbyob53W46yq9hwqYS7PjFMjinyyG3aDX6mdOPtngtO8xfslkIBaSao5EDJC5HpA0KMPAc2xW7\\r\\nlmA/bluIS7a+U0Tbvv7uaZajTRV7KlT+7N2PpNUuMr0ilvB8wZjhJHZtNU2DTvotCPCdNaxTKLLT\\r\\nZc1at2Vc8Z10VrDvGK4JnHEAS6amNWoFPEdjzpbtVVV8F7xl8bJfKE4SwrBzZn8Aq5BcIxMhL5eq\\r\\nmS1dUj/x/4GUETE7ojJYYTE/4XVNzOxjmJc0\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Internal Groups",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setInternalGroups ($input: [InternalGroupInput!]!) {\n    setInternalGroups (input: $input) {\n        internalGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"banana_users\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for  banana_users\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Internal User",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteInternalUser($login: String!) {\n  deleteInternalUser(login: $login) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"login\": \"banana3\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Internal Group",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteInternalGroup($name: String!) {\n  deleteInternalGroup(name: $name) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"name\": \"TestGroupFoo\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Fip Users",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setFipUsers ($input: [FipUserInput!]!) {\n    setFipUsers (input: $input) {\n        detailedStatus{status description}\n        fipUsers {\n            name\n            providerName\n            memberOf{name}\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Johnny\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"email\": \"johnny@dirt.com\",\n                \"memberOf\": [{\n                    \"name\": \"group1\"\n                }],\n                \"subjectDn\": \"cn=john\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Fip User",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteFipUser($fipName: String!, $userName: String!) {\n  deleteFipUser(fipName: $fipName, userName: $userName) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"userName\": \"Johnny\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Fip Groups",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setFipGroups ($input: [FipGroupInput!]!) {\n    setFipGroups (input: $input) {\n        detailedStatus{status description}\n        fipGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"group 1\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for Test Foo\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Fip Group",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteFipGroup($fipName: String!, $groupName: String!) {\n  deleteFipGroup(fipName: $fipName, groupName: $groupName) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"groupName\": \"TestGroupFoo\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
 											]
 										}
 									},
@@ -4582,640 +4142,6 @@
 				}
 			],
 			"description": "# CRUD Config Entities\n\nThis folder contains queries (read) and mutations (create/update/delete) for full CRUD for each Layer7 Gateway configuration entity type supported."
-		},
-		{
-			"name": "Summary and compare",
-			"item": [
-				{
-					"name": "Compare gateways",
-					"item": [
-						{
-							"name": "Source Summary",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const summarySource=pm.response.json();",
-											"pm.environment.set(\"summarySource\", JSON.stringify(summarySource));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query summary {\n    policyFragments {\n        name\n        guid\n        checksum\n    }\n    encassConfigs {\n        name\n        guid\n        checksum\n    }\n    webApiServices {\n        resolutionPath\n        checksum\n    }\n    clusterProperties {\n        name\n        checksum\n    }\n    trustedCerts {\n        name\n        subjectDn\n        checksum\n    }\n    jdbcConnections {\n        name\n        checksum\n    }\n    soapServices {\n        name\n        resolvers {\n            baseUri\n            soapActions\n            resolutionPath\n        }\n        checksum\n    }\n    schemas {\n        systemId\n        checksum\n    }\n    dtds {\n        systemId\n        checksum\n    }\n    fips {\n        name\n        checksum\n        goid\n    }\n    ldaps {\n        name\n        checksum\n        goid\n    }\n    internalGroups {\n        name\n        checksum\n        goid\n    }\n    fipGroups {\n        name\n        providerName\n        checksum\n        goid\n    }\n    internalUsers {\n        name\n        checksum\n        goid\n    }\n    fipUsers {\n        name\n        providerName\n        checksum\n        goid\n    }\n    keys {\n        alias\n        checksum\n    }\n    secrets {\n        name\n        checksum\n    }\n    cassandraConnections {\n        name\n        checksum\n    }\n    jmsDestinations {\n       name\n       checksum\n    }\n    globalPolicies {\n       name\n       tag\n       guid\n       checksum\n   }\n    backgroundTaskPolicies {\n       name\n       guid\n       checksum\n   }\n    scheduledTasks {\n       name\n       checksum\n   }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "Summary of source\n\nUse as-is except for the target. This produces a summary of all the configuration."
-							},
-							"response": []
-						},
-						{
-							"name": "Target Summary",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"// set summary target",
-											"var targetSummaryRoot=pm.response.json();",
-											"pm.environment.set(\"summaryTarget\", JSON.stringify(targetSummaryRoot));",
-											"// get source one",
-											"var sourceSummaryRoot = JSON.parse(pm.environment.get(\"summarySource\"));",
-											"if (sourceSummaryRoot.data) sourceSummaryRoot = sourceSummaryRoot.data;",
-											"if (targetSummaryRoot.data) targetSummaryRoot = targetSummaryRoot.data;",
-											"",
-											"",
-											"",
-											"const report = {};",
-											"const guidMappings = [];",
-											"var goidMappings = [];",
-											"",
-											"// traverse the source and compare to target",
-											"const keys = Object.keys(sourceSummaryRoot);",
-											"const entries = Object.values(sourceSummaryRoot);",
-											"for (var i = 0; i < keys.length; i++) {",
-											"    if (Array.isArray(entries[i])) {",
-											"        var arrayEntries = entries[i];",
-											"        for (var j = 0; j < arrayEntries.length; j++) {",
-											"            processSingleEntity(arrayEntries[j], keys[i]);",
-											"        }",
-											"    } else {",
-											"        processSingleEntity(entries[i], keys[i]);",
-											"    }",
-											"}",
-											"function processSingleEntity(entity, type) {",
-											"    const targetSummarySection = targetSummaryRoot[type];",
-											"    if (report[type] == null) report[type] = {};",
-											"    var targetReportArea = report[type];",
-											"    handleEntry(entity, targetSummarySection, targetReportArea);",
-											"}",
-											"function matchIt(sourceEntry, targetArea) {",
-											"    // look for corresponding on target",
-											"    var match = null;",
-											"    if (targetArea) for (var j = 0; j < targetArea.length; j++) {",
-											"        if (sourceEntry.resolvers) { // soap services match by resolver",
-											"            // try to match base uri",
-											"            var sameBaseUri = false;",
-											"            if (targetArea[j].resolvers.baseUri === sourceEntry.resolvers.baseUri) {",
-											"                sameBaseUri = true;",
-											"            }",
-											"            // try to match resolution path but only if base uri matches",
-											"            var sameResolutionPath = false;",
-											"            if (sameBaseUri) {",
-											"                if (targetArea[j].resolvers.resolutionPath) {",
-											"                    if (targetArea[j].resolvers.resolutionPath === sourceEntry.resolvers.resolutionPath) {",
-											"                        sameResolutionPath = true;",
-											"                    }",
-											"                } else if (!sourceEntry.resolvers.resolutionPath) {",
-											"                    sameResolutionPath = true;",
-											"                }",
-											"            }",
-											"            // try to match soapaction if rest matches so far",
-											"            var matchSoapAction = false;",
-											"            if (sameBaseUri && sameResolutionPath) {",
-											"                if (targetArea[j].resolvers.soapActions.length < 1 && sourceEntry.resolvers.soapActions.length < 1) {",
-											"                    matchSoapAction = true;",
-											"                } else for (var k = 0; k < targetArea[j].resolvers.soapActions.length; k++) {",
-											"                    for (var l = 0; l < sourceEntry.resolvers.soapActions.length; l++) {",
-											"                        if (targetArea[j].resolvers.soapActions[k] === sourceEntry.resolvers.soapActions[l]) {",
-											"                            matchSoapAction = true;",
-											"                            break;",
-											"                        }",
-											"                    }",
-											"                }",
-											"            }",
-											"            if (sameBaseUri && sameResolutionPath && matchSoapAction) {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        } else if (sourceEntry.systemId) { // dtd and schemas match by 'systemId' property, if present, match on that",
-											"            if (targetArea[j].systemId === sourceEntry.systemId) {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        }  else if (sourceEntry.resolutionPath) { // rest apis match by resolution path",
-											"            if (targetArea[j].resolutionPath === sourceEntry.resolutionPath) {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        } else if (sourceEntry.alias) {",
-											"            if (targetArea[j].alias === sourceEntry.alias) {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        } else if (targetArea[j].name === sourceEntry.name) { // otherwise, match by name",
-											"            if (sourceEntry.providerName) { // if the providername is set, also match that",
-											"                if (targetArea[j].providerName === sourceEntry.providerName) {",
-											"                    match = targetArea[j];",
-											"                    break;",
-											"                }",
-											"            } else {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        }",
-											"    }",
-											"    return match;",
-											"}",
-											"function handleEntry(sourceEntry, targetArea, reportArea) {",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (!reportArea.new) reportArea.new = [];",
-											"        reportArea.new.push(sourceEntry);",
-											"    } else {",
-											"        if (sourceEntry.checksum === match.checksum) {",
-											"            // checksum match",
-											"        } else {",
-											"            if (!reportArea.updated) reportArea.updated = [];",
-											"            reportArea.updated.push(sourceEntry);",
-											"        }",
-											"        // only worry about guid check if declared at source",
-											"        if (sourceEntry.guid) {",
-											"            if (sourceEntry.guid === match.guid) {",
-											"                // goid match",
-											"            } else {",
-											"                // also record separately",
-											"                var guidmap = {};",
-											"                guidmap.source = sourceEntry.guid;",
-											"                guidmap.target = match.guid;",
-											"                guidMappings.push(guidmap);",
-											"                reportArea.guidConflicts.push(sourceEntry);",
-											"            }",
-											"        }",
-											"        // only worry about goid check if declared at source",
-											"        if (sourceEntry.goid) {",
-											"            if (sourceEntry.goid === match.goid) {",
-											"                // goid match",
-											"            } else {",
-											"                // record the goid difference separately for mapping purposes",
-											"                var goidmap = {};",
-											"                goidmap.source = sourceEntry.goid;",
-											"                goidmap.target = match.goid;",
-											"                goidMappings.push(goidmap);",
-											"                if (!reportArea.goidConflicts) reportArea.goidConflicts = [];",
-											"                reportArea.goidConflicts.push(sourceEntry);",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"// END OF PROCESSING SUMMARY ENTRIES",
-											"// clean report of empty sections",
-											"const reportkeys = Object.keys(report);",
-											"for (var i = 0; i < reportkeys.length; i++)  {",
-											"    const prop = report[reportkeys[i]];",
-											"    if (prop) {",
-											"        var shouldDelete = true;",
-											"        if (prop.new) {",
-											"            if (prop.new.length > 0) shouldDelete = false;",
-											"            else delete prop.new;",
-											"        }",
-											"        if (prop.updated) {",
-											"            if (prop.updated.length > 0) shouldDelete = false;",
-											"            else delete prop.updated;",
-											"        }",
-											"        if (prop.guidConflicts) {",
-											"            if (prop.guidConflicts.length > 0) shouldDelete = false;",
-											"            else delete prop.guidConflicts;",
-											"        }",
-											"        if (prop.goidConflicts) {",
-											"            if (prop.goidConflicts.length > 0) shouldDelete = false;",
-											"            else delete prop.goidConflicts;",
-											"        }",
-											"        if (shouldDelete) delete report[reportkeys[i]];",
-											"    }",
-											"}",
-											"",
-											"// append mappings if any",
-											"if (goidMappings.length > 0) {",
-											"    report.goidMappings = goidMappings;",
-											"}",
-											"if (guidMappings.length > 0) {",
-											"    report.guidMappings = guidMappings;",
-											"}",
-											"",
-											"",
-											"",
-											"// Display and save report results",
-											"const finalReport = JSON.stringify(report, null, 2);",
-											"pm.environment.set(\"compareReport\", finalReport);",
-											"console.log(finalReport);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query summary {\n    policyFragments {\n        name\n        guid\n        checksum\n    }\n    encassConfigs {\n        name\n        guid\n        checksum\n    }\n    webApiServices {\n        resolutionPath\n        checksum\n    }\n    clusterProperties {\n        name\n        checksum\n    }\n    trustedCerts {\n        name\n        subjectDn\n        checksum\n    }\n    jdbcConnections {\n        name\n        checksum\n    }\n    soapServices {\n        name\n        resolvers {\n            baseUri\n            soapActions\n            resolutionPath\n        }\n        checksum\n    }\n    schemas {\n        systemId\n        checksum\n    }\n    dtds {\n        systemId\n        checksum\n    }\n    fips {\n        name\n        checksum\n        goid\n    }\n    ldaps {\n        name\n        checksum\n        goid\n    }\n    internalGroups {\n        name\n        checksum\n        goid\n    }\n    fipGroups {\n        name\n        providerName\n        checksum\n        goid\n    }\n    internalUsers {\n        name\n        checksum\n        goid\n    }\n    fipUsers {\n        name\n        providerName\n        checksum\n        goid\n    }\n    keys {\n        alias\n        checksum\n    }\n    secrets {\n        name\n        checksum\n    }\n    cassandraConnections {\n        name\n        checksum\n    }\n    jmsDestinations {\n       name\n       checksum\n    }\n    globalPolicies {\n       name\n       tag\n       guid\n       checksum\n   }\n    backgroundTaskPolicies {\n       name\n       guid\n       checksum\n   }\n    scheduledTasks {\n       name\n       checksum\n   }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "Summary of target\n\nUse as-is except for the target. This produces a summary of all the configuration."
-							},
-							"response": []
-						}
-					],
-					"description": "Sequence of graphman calls to produce a report which highlights the differences between a source and target gateways.\n\nThe report is shown in the console as well as saved in the environment."
-				},
-				{
-					"name": "Dependency Analyzer",
-					"item": [
-						{
-							"name": "Dependency Summary",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var depSummaryRoot = pm.response.json();",
-											"if (depSummaryRoot.data) depSummaryRoot = depSummaryRoot.data;",
-											"",
-											"function matchIt(left, right) {",
-											"    if (left.resolvers) { // soap services match by resolver",
-											"        // try to match base uri",
-											"        var sameBaseUri = false;",
-											"        if (right.resolvers.baseUri === left.resolvers.baseUri) {",
-											"            sameBaseUri = true;",
-											"        }",
-											"        // try to match resolution path but only if base uri matches",
-											"        var sameResolutionPath = false;",
-											"        if (sameBaseUri) {",
-											"            if (right.resolvers.resolutionPath) {",
-											"                if (right.resolvers.resolutionPath === left.resolvers.resolutionPath) {",
-											"                    sameResolutionPath = true;",
-											"                }",
-											"            } else if (!left.resolvers.resolutionPath) {",
-											"                sameResolutionPath = true;",
-											"            }",
-											"        }",
-											"        // try to match soapaction if rest matches so far",
-											"        var matchSoapAction = false;",
-											"        if (sameBaseUri && sameResolutionPath) {",
-											"            for (var k = 0; k < right.resolvers.soapActions.length; k++) {",
-											"                for (var l = 0; l < left.resolvers.soapActions.length; l++) {",
-											"                    if (right.resolvers.soapActions[k] === left.resolvers.soapActions[l]) {",
-											"                        matchSoapAction = true;",
-											"                        break;",
-											"                    }",
-											"                }",
-											"            }",
-											"        }",
-											"        if (sameBaseUri && sameResolutionPath && matchSoapAction) {",
-											"            return true;",
-											"        }",
-											"    } else if (left.systemId) { // dtd and schemas match by 'systemId' property, if present, match on that",
-											"        if (right.systemId === left.systemId) {",
-											"            return true;",
-											"        }",
-											"    }  else if (left.resolutionPath) { // rest apis match by resolution path",
-											"        if (right.resolutionPath === left.resolutionPath) {",
-											"            return true;",
-											"        }",
-											"    } else if (left.alias) {",
-											"        if (right.alias === left.alias) {",
-											"            return true;",
-											"        }",
-											"    } else if (left.name && right.name === left.name) { // otherwise, match by name",
-											"        if (left.providerName) { // if the providername is set, also match that",
-											"            if (right.providerName === left.providerName) {",
-											"                return true;",
-											"            }",
-											"        } else {",
-											"            return true;",
-											"        }",
-											"    }",
-											"    return false;",
-											"}",
-											"",
-											"function handleEntry(parentName, entity, root) {",
-											"    const keys = Object.keys(root);",
-											"    for (var i = 0; i < keys.length; i++) {",
-											"        const proparray = root[keys[i]];",
-											"        if (proparray != null && Array.isArray(proparray) && proparray.length > 0) {",
-											"            for (var j = 0; j < proparray.length; j++) {",
-											"                const prop = proparray[j];",
-											"                if (prop.policy && prop.policy.allDependencies) {",
-											"                    const subkeys = Object.keys(prop.policy.allDependencies);",
-											"                    const subproparrayOfInterest = prop.policy.allDependencies[parentName];",
-											"                    if (subproparrayOfInterest != null && Array.isArray(subproparrayOfInterest) && subproparrayOfInterest.length > 0) {",
-											"                        for (var k = 0; k < subproparrayOfInterest.length; k++) {",
-											"                            if (matchIt(entity, subproparrayOfInterest[k])) {",
-											"                                if (entity.reverseDependencies == null) entity.reverseDependencies = {};",
-											"                                if (entity.reverseDependencies[keys[i]] == null) entity.reverseDependencies[keys[i]] = [];",
-											"                                entity.reverseDependencies[keys[i]].push(prop);",
-											"                            }",
-											"                        }",
-											"                    }",
-											"                }",
-											"            }",
-											"        }",
-											"    }",
-											"}",
-											"",
-											"const keys = Object.keys(depSummaryRoot);",
-											"for (var i = 0; i < keys.length; i++) {",
-											"    const proparray = depSummaryRoot[keys[i]];",
-											"    if (proparray != null && Array.isArray(proparray) && proparray.length > 0) {",
-											"        for (var j = 0; j < proparray.length; j++) {",
-											"            const prop = proparray[j];",
-											"            handleEntry(keys[i], prop, depSummaryRoot);",
-											"        }",
-											"    }",
-											"}",
-											"// traverse, remove what we dont want to keep",
-											"for (var i = 0; i < keys.length; i++) {",
-											"    const proparray = depSummaryRoot[keys[i]];",
-											"    if (proparray != null && Array.isArray(proparray) && proparray.length > 0) {",
-											"        for (var j = 0; j < proparray.length; j++) {",
-											"            const prop = proparray[j];",
-											"            // delete forward dependencies that are there",
-											"            if (prop.policy) delete prop.policy;",
-											"            // only keep what has reverse dependencies",
-											"            if (prop.reverseDependencies) {",
-											"                var shouldDelete = true;",
-											"                const subkeys = Object.keys(prop.reverseDependencies);",
-											"                for (var k = 0; k < subkeys.length; k++) {",
-											"                    const subproparray = prop.reverseDependencies[subkeys[k]];",
-											"                    if (subproparray.length < 1) delete prop.reverseDependencies[subkeys[k]];",
-											"                    else {",
-											"                        shouldDelete = false;",
-											"                    }",
-											"                }",
-											"                if (shouldDelete) {",
-											"                    delete prop.reverseDependencies;",
-											"                    delete proparray[j];",
-											"                }",
-											"            } else {",
-											"                delete proparray[j];",
-											"            }",
-											"        }",
-											"        // delete null entries from array",
-											"        var filtered = proparray.filter(function (el) {",
-											"            return el != null;",
-											"        });",
-											"        depSummaryRoot[keys[i]] = filtered;",
-											"    }",
-											"    if (depSummaryRoot[keys[i]].length < 1) {",
-											"        delete depSummaryRoot[keys[i]];",
-											"    }",
-											"}",
-											"",
-											"// report result",
-											"console.log(JSON.stringify(depSummaryRoot, null, 2));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query dependencySummary {\n    policyFragments {\n        name\n        guid\n        checksum\n        policy {\n            allDependencies {\n                policyFragments {\n                    name\n                    guid\n                    checksum\n                }\n                encassConfigs {\n                    name\n                    guid\n                    checksum\n                }\n                clusterProperties {\n                    name\n                    checksum\n                }\n                trustedCerts {\n                    name\n                    subjectDn\n                    checksum\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                }\n                schemas {\n                    systemId\n                    checksum\n                }\n                dtds {\n                    systemId\n                    checksum\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                }\n                ldaps {\n                    name\n                    checksum\n                    goid\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                internalUsers {\n                    name\n                    checksum\n                    goid\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                }\n                secrets {\n                    name\n                    checksum\n                    goid\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    name\n                    checksum\n                }\n            }\n        }\n    }\n    encassConfigs {\n        name\n        guid\n        checksum\n    }\n    webApiServices {\n        resolutionPath\n        checksum\n        policy {\n            allDependencies {\n                policyFragments {\n                    name\n                    guid\n                    checksum\n                }\n                encassConfigs {\n                    name\n                    guid\n                    checksum\n                }\n                clusterProperties {\n                    name\n                    checksum\n                }\n                trustedCerts {\n                    name\n                    subjectDn\n                    checksum\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                }\n                schemas {\n                    systemId\n                    checksum\n                }\n                dtds {\n                    systemId\n                    checksum\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                }\n                ldaps {\n                    name\n                    checksum\n                    goid\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                internalUsers {\n                    name\n                    checksum\n                    goid\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                }\n                secrets {\n                    name\n                    checksum\n                    goid\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    name\n                    checksum\n                }\n            }\n        }\n    }\n    clusterProperties {\n        name\n        checksum\n    }\n    trustedCerts {\n        name\n        subjectDn\n        checksum\n    }\n    jdbcConnections {\n        name\n        checksum\n    }\n    soapServices {\n        name\n        resolvers {\n            baseUri\n            soapActions\n            resolutionPath\n        }\n        checksum\n        policy {\n            allDependencies {\n                policyFragments {\n                    name\n                    guid\n                    checksum\n                }\n                encassConfigs {\n                    name\n                    guid\n                    checksum\n                }\n                clusterProperties {\n                    name\n                    checksum\n                }\n                trustedCerts {\n                    name\n                    subjectDn\n                    checksum\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                }\n                schemas {\n                    systemId\n                    checksum\n                }\n                dtds {\n                    systemId\n                    checksum\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                }\n                ldaps {\n                    name\n                    checksum\n                    goid\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                internalUsers {\n                    name\n                    checksum\n                    goid\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                }\n                secrets {\n                    name\n                    checksum\n                    goid\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    name\n                    checksum\n                }\n            }\n        }\n    }\n    schemas {\n        systemId\n        checksum\n    }\n    dtds {\n        systemId\n        checksum\n    }\n    fips {\n        name\n        checksum\n        goid\n    }\n    ldaps {\n        name\n        checksum\n        goid\n    }\n    internalGroups {\n        name\n        checksum\n        goid\n    }\n    fipGroups {\n        name\n        providerName\n        checksum\n        goid\n    }\n    internalUsers {\n        name\n        checksum\n        goid\n    }\n    fipUsers {\n        name\n        providerName\n        checksum\n        goid\n    }\n    keys {\n        alias\n        checksum\n        goid\n    }\n    secrets {\n        name\n        checksum\n        goid\n    }\n    cassandraConnections {\n        goid\n        name\n        checksum\n    }\n    jmsDestinations {\n       goid\n       name\n       checksum\n    }\n    globalPolicies {\n       name\n       tag\n       guid\n       checksum\n       policy {\n            allDependencies {\n                policyFragments {\n                    name\n                    guid\n                    checksum\n                }\n                encassConfigs {\n                    name\n                    guid\n                    checksum\n                }\n                clusterProperties {\n                    name\n                    checksum\n                }\n                trustedCerts {\n                    name\n                    subjectDn\n                    checksum\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                }\n                schemas {\n                    systemId\n                    checksum\n                }\n                dtds {\n                    systemId\n                    checksum\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                }\n                ldaps {\n                    name\n                    checksum\n                    goid\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                internalUsers {\n                    name\n                    checksum\n                    goid\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                }\n                secrets {\n                    name\n                    checksum\n                    goid\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    name\n                    checksum\n                }\n            }\n        }\n    }\n    backgroundTaskPolicies {\n       name\n       guid\n       checksum\n       policy {\n            allDependencies {\n                policyFragments {\n                    name\n                    guid\n                    checksum\n                }\n                encassConfigs {\n                    name\n                    guid\n                    checksum\n                }\n                clusterProperties {\n                    name\n                    checksum\n                }\n                trustedCerts {\n                    name\n                    subjectDn\n                    checksum\n                }\n                jdbcConnections {\n                    name\n                    checksum\n                }\n                schemas {\n                    systemId\n                    checksum\n                }\n                dtds {\n                    systemId\n                    checksum\n                }\n                fips {\n                    name\n                    checksum\n                    goid\n                }\n                ldaps {\n                    name\n                    checksum\n                    goid\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                }\n                fipGroups {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                internalUsers {\n                    name\n                    checksum\n                    goid\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    goid\n                }\n                keys {\n                    alias\n                    checksum\n                    goid\n                }\n                secrets {\n                    name\n                    checksum\n                    goid\n                }\n                cassandraConnections {\n                    goid\n                    name\n                    checksum\n                }\n                jmsDestinations {\n                    goid\n                    name\n                    checksum\n                }\n            }\n        }\n   }\n    scheduledTasks {\n       name\n       checksum\n   }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "# Summary of Dependencies"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Compare Identity Providers, Users, Groups",
-					"item": [
-						{
-							"name": "Idp Summary Source",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const summarySource=pm.response.json();",
-											"pm.environment.set(\"idpSummarySource\", JSON.stringify(summarySource));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query idp_summary {\n    fips {\n        name\n        goid\n    }\n    ldaps {\n        name\n        goid\n    }\n    internalGroups {\n        name\n        goid\n    }\n    fipGroups {\n        name\n        goid\n    }\n    internalUsers {\n        name\n        goid\n    }\n    fipUsers {\n        name\n        goid\n    }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{source_gw}}",
-									"host": [
-										"{{source_gw}}"
-									]
-								},
-								"description": "Summary of the identity provider-related entities in the gateway. See folder doc."
-							},
-							"response": []
-						},
-						{
-							"name": "Idp Summary Target",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var targetSummaryRoot=pm.response.json();",
-											"// generate report including entities with missingFromTarget and goidMappings",
-											"const outpackage = {};",
-											"outpackage.missingFromTarget = {};",
-											"outpackage.goidMappings = [];",
-											"",
-											"function checkGoids(sourceGoid, targetGoid) {",
-											"    if (sourceGoid === targetGoid) {",
-											"            // it matches, do nothing",
-											"        } else {",
-											"            var goidmap = {};",
-											"            goidmap.source = sourceGoid;",
-											"            goidmap.target = targetGoid;",
-											"            outpackage.goidMappings.push(goidmap)",
-											"        }",
-											"}",
-											"function matchIt(sourceEntry, targetArea) {",
-											"    // look for corresponding on target",
-											"    var match = null;",
-											"    if (targetArea) for (var j = 0; j < targetArea.length; j++) {",
-											"        if (targetArea[j].name === sourceEntry.name) {",
-											"            // if the providername is set, also match that",
-											"            if (sourceEntry.providerName) {",
-											"                if (targetArea[j].providerName === sourceEntry.providerName) {",
-											"                    match = targetArea[j];",
-											"                    break;",
-											"                }",
-											"            } else {",
-											"                match = targetArea[j];",
-											"                break;",
-											"            }",
-											"        }",
-											"    }",
-											"    return match;",
-											"}",
-											"",
-											"var sourceSummaryRoot = JSON.parse(pm.environment.get(\"idpSummarySource\"));",
-											"if (sourceSummaryRoot.data) sourceSummaryRoot = sourceSummaryRoot.data;",
-											"if (targetSummaryRoot.data) targetSummaryRoot = targetSummaryRoot.data;",
-											"// Fips",
-											"if (sourceSummaryRoot.fips) for (var i = 0; i < sourceSummaryRoot.fips.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.fips[i];",
-											"    const targetArea = targetSummaryRoot.fips;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.fips == null) {",
-											"            outpackage.missingFromTarget.fips = [];",
-											"        }",
-											"        outpackage.missingFromTarget.fips.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"// ldaps",
-											"if (sourceSummaryRoot.ldaps) for (var i = 0; i < sourceSummaryRoot.ldaps.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.ldaps[i];",
-											"    const targetArea = targetSummaryRoot.ldaps;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.ldaps == null) {",
-											"            outpackage.missingFromTarget.ldaps = [];",
-											"        }",
-											"        outpackage.missingFromTarget.ldaps.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"// internalGroups",
-											"// toto overwrite match to consider the idprovider name",
-											"if (sourceSummaryRoot.internalGroups) for (var i = 0; i < sourceSummaryRoot.internalGroups.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.internalGroups[i];",
-											"    const targetArea = targetSummaryRoot.internalGroups;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.internalGroups == null) {",
-											"            outpackage.missingFromTarget.internalGroups = [];",
-											"        }",
-											"        outpackage.missingFromTarget.internalGroups.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"// fipGroups",
-											"if (sourceSummaryRoot.fipGroups) for (var i = 0; i < sourceSummaryRoot.fipGroups.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.fipGroups[i];",
-											"    const targetArea = targetSummaryRoot.fipGroups;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.fipGroups == null) {",
-											"            outpackage.missingFromTarget.fipGroups = [];",
-											"        }",
-											"        outpackage.missingFromTarget.fipGroups.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"// internalUsers",
-											"if (sourceSummaryRoot.internalUsers) for (var i = 0; i < sourceSummaryRoot.internalUsers.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.internalUsers[i];",
-											"    const targetArea = targetSummaryRoot.internalUsers;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.internalUsers == null) {",
-											"            outpackage.missingFromTarget.internalUsers = [];",
-											"        }",
-											"        outpackage.missingFromTarget.internalUsers.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"// fipUsers",
-											"// toto overwrite match to consider the idprovider name",
-											"if (sourceSummaryRoot.fipUsers) for (var i = 0; i < sourceSummaryRoot.fipUsers.length; i++) {",
-											"    const sourceEntry = sourceSummaryRoot.fipUsers[i];",
-											"    const targetArea = targetSummaryRoot.fipUsers;",
-											"    // look for corresponding on target",
-											"    var match = matchIt(sourceEntry, targetArea);",
-											"    // if no match, remember in missingFromTargets, otherwise check goid match",
-											"    if (match == null) {",
-											"        if (outpackage.missingFromTarget.fipUsers == null) {",
-											"            outpackage.missingFromTarget.fipUsers = [];",
-											"        }",
-											"        outpackage.missingFromTarget.fipUsers.push(sourceEntry);",
-											"    } else checkGoids(sourceEntry.goid, match.goid);",
-											"}",
-											"",
-											"",
-											"const finalReport = JSON.stringify(outpackage, null, 2);",
-											"console.log(finalReport);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "graphql",
-									"graphql": {
-										"query": "query idp_summary {\n    fips {\n        name\n        goid\n    }\n    ldaps {\n        name\n        goid\n    }\n    internalGroups {\n        name\n        goid\n    }\n    fipGroups {\n        name\n        goid\n    }\n    internalUsers {\n        name\n        goid\n    }\n    fipUsers {\n        name\n        goid\n    }\n}",
-										"variables": "{}"
-									}
-								},
-								"url": {
-									"raw": "{{target_gw}}",
-									"host": [
-										"{{target_gw}}"
-									]
-								},
-								"description": "Summary of the identity provider-related entities in the gateway. See folder doc."
-							},
-							"response": []
-						}
-					],
-					"description": "This generates a identity provider summary for a source and target gateway and produces a report summarizing which entities on source are not present on target as well as creates a list of goid mappings. The entity types covered by this are:\n\n\\*   Fip\n\\*   LdapConfig\n\\*   FipGroup\n\\*   FipUser\n\\*   InternalGroup\n\\*   InternalUser"
-				}
-			]
 		}
 	],
 	"auth": {
