@@ -107,6 +107,9 @@ module.exports = {
         }
         else if (left[idRef] !== right[idRef]) return false;
 
+        if (left.name && left.direction && left.providerType &&
+            (left.name !== right.name || left.direction !== right.direction || left.providerType !== right.providerType)) return false;
+
         return !(idRef !== 'name' && left.name && left.name !== right.name);
     },
 
@@ -128,7 +131,9 @@ module.exports = {
         const idRef = this.entityIdRef(entity);
         if (attr) attr.ref = idRef;
 
-        if (entity.providerName) {
+        if (entity.providerType && entity.direction && entity.name) {
+            return entity.direction + "-" + entity.providerType + "-" + entity.name;
+        } else if (entity.providerName) {
             return entity.providerName + "-" + entity.name;
         } else if (entity.resolvers) {
             const baseUri = entity.resolvers.baseUri ? "-" + entity.resolvers.baseUri : "";
