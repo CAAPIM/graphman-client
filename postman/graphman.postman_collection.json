@@ -1535,8 +1535,8 @@
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation setFips ($input: [FipInput!]!) {\n    setFips (input: $input) {\n        detailedStatus{status description}\n        fips {\n            goid\n            name\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Foo2\",\n                \"checksum\": \"46994bf282abf9d6e3640b88f70ced716a2e361d\",\n                \"enableCredentialTypeX509\": false,\n                \"enableCredentialTypeSaml\": true,\n                \"certificateReferences\": [\n                    {\n                        \"thumbprintSha1\": \"boRxUgf35aj2SUf0fjT6MkGiKv8=\"\n                    }\n                ]\n            }\n  ]\n}"
+												"query": "mutation setFips (\n    $fips: [FipInput!]!,\n    $trustedCerts: [TrustedCertInput!]!) {\n    # Ensure the availability of fips dependencies\n    setTrustedCerts (input: $trustedCerts) {\n        detailedStatus {status description}\n        trustedCerts {\n            goid\n            name\n            subjectDn\n            thumbprintSha1\n            checksum\n        }\n    }\n\n    setFips (input: $fips) {\n        detailedStatus{status description}\n        fips {\n            goid\n            name\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"fips\": [\n    {\n        \"name\": \"some-fip\",\n        \"enableCredentialTypeSaml\": true,\n        \"enableCredentialTypeX509\": false,\n        \"certificateReferences\": [\n            {\n                \"thumbprintSha1\": \"8qrXPTJoO3FtKn1htRxtV2SrOJk=\"\n            }\n        ]\n    }\n  ],\n\n  \"trustedCerts\": [\n    {\n      \"name\": \"some-trusted-cert\",\n      \"subjectDn\": \"cn=www.example.org,o=internet corporation for assigned names and numbers,l=los angeles,st=california,c=us\",\n      \"thumbprintSha1\": \"8qrXPTJoO3FtKn1htRxtV2SrOJk=\",\n      \"verifyHostname\": false,\n      \"trustAnchor\": false,\n      \"trustedFor\": [\n        \"SSL\",\n        \"SIGNING_SERVER_CERTS\"\n      ],\n      \"revocationCheckPolicyType\": \"USE_DEFAULT\",\n      \"notBefore\": \"2023-01-13T00:00:00Z\",\n      \"notAfter\": \"2024-02-13T23:59:59Z\",\n      \"certBase64\": \"MIIHSjCCBjKgAwIBAgIQDB/LGEUYx+OGZ0EjbWtz8TANBgkqhkiG9w0BAQsFADBPMQswCQYDVQQG\\r\\nEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMSkwJwYDVQQDEyBEaWdpQ2VydCBUTFMgUlNBIFNI\\r\\nQTI1NiAyMDIwIENBMTAeFw0yMzAxMTMwMDAwMDBaFw0yNDAyMTMyMzU5NTlaMIGWMQswCQYDVQQG\\r\\nEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEUMBIGA1UEBxMLTG9zIEFuZ2VsZXMxQjBABgNVBAoM\\r\\nOUludGVybmV0wqBDb3Jwb3JhdGlvbsKgZm9ywqBBc3NpZ25lZMKgTmFtZXPCoGFuZMKgTnVtYmVy\\r\\nczEYMBYGA1UEAxMPd3d3LmV4YW1wbGUub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC\\r\\nAQEAwoB3iVm4RW+6StkR+nutx1fQevu2+t0Fu6KBcbvhfyHSXy7w0nJOdTT4jWLjStpRkNQBPZwM\\r\\nwHH35i+21gdnJtDe/xfO8IX9McFmyodlBUcqX8CruIzDv9AXf2OjXPBG+4aq+03XKl5/muATl32+\\r\\n+301Vw1dXoGYNeoWQqLTsHT3WS3tOOf+ehuzNuZ+rj+ephaD3lMBToEArrtC9R91KTTN6YSAOK48\\r\\nNxTA8CfOMFK5itxfIqB5+E9OSQTidXyqLyoeA+xxTKMqYfxvypEek1oueAhY9u67NCBdmuavxtfy\\r\\nvwp7+o6Sd+NsewxAhmRKFexw13KOYzDhC+9aMJcuJQIDAQABo4ID2DCCA9QwHwYDVR0jBBgwFoAU\\r\\nt2ui6qiqhIx56rTaD5iyxZV2ufQwHQYDVR0OBBYEFLCTP+gXgv1ssrYXh8vjgP6CmwGeMIGBBgNV\\r\\nHREEejB4gg93d3cuZXhhbXBsZS5vcmeCC2V4YW1wbGUubmV0ggtleGFtcGxlLmVkdYILZXhhbXBs\\r\\nZS5jb22CC2V4YW1wbGUub3Jngg93d3cuZXhhbXBsZS5jb22CD3d3dy5leGFtcGxlLmVkdYIPd3d3\\r\\nLmV4YW1wbGUubmV0MA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUH\\r\\nAwIwgY8GA1UdHwSBhzCBhDBAoD6gPIY6aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0\\r\\nVExTUlNBU0hBMjU2MjAyMENBMS00LmNybDBAoD6gPIY6aHR0cDovL2NybDQuZGlnaWNlcnQuY29t\\r\\nL0RpZ2lDZXJ0VExTUlNBU0hBMjU2MjAyMENBMS00LmNybDA+BgNVHSAENzA1MDMGBmeBDAECAjAp\\r\\nMCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwfwYIKwYBBQUHAQEEczBx\\r\\nMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wSQYIKwYBBQUHMAKGPWh0dHA6\\r\\nLy9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFRMU1JTQVNIQTI1NjIwMjBDQTEtMS5jcnQw\\r\\nCQYDVR0TBAIwADCCAX8GCisGAQQB1nkCBAIEggFvBIIBawFpAHYA7s3QZNXbGs7FXLedtM0TojKH\\r\\nRny87N7DUUhZRnEftZsAAAGFq0gFIwAABAMARzBFAiEAqt+fK6jFdGA6tv0EWt9rax0WYBV4re9j\\r\\ngZgq0zi42QUCIEBh1yKpPvgX1BreE0wBUmriOVUhJS77KgF193fT2877AHcAc9meiRtMlnigIH1H\\r\\nneayxhzQUV5xGSqMa4AQesF3crUAAAGFq0gFnwAABAMASDBGAiEA12SUFK5rgLqRzvgcr7ZzV4nl\\r\\n+Zt9lloAzRLfPc7vSPACIQCXPbwScx1rE+BjFawZlVjLj/1PsM0KQQcsfHDZJUTLwAB2AEiw42va\\r\\npkc0D+VqAvqdMOscUgHLVt0sgdm7v6s52IRzAAABhatIBV4AAAQDAEcwRQIhAN5bhHthoyWMJ3CQ\\r\\nB/1iYFEhMgUVkFhHDM/nlE9ThCwhAiAPvPJXyp7a2kzwJX3P7fqH5Xko3rPhCzRoXYd6W+QkCjAN\\r\\nBgkqhkiG9w0BAQsFAAOCAQEAWeRK2KmCuppK8WMMbXYmdbM8dL7F9z2nkZL4zwYtWBDt87jW/Gz/\\r\\nE5YyzU/phySFC3SiwvYP9afYfXaKrunJWCtuAG+5zSTuxELFTBaFnTRhOSO/xo6VyYSpsuVBD0R4\\r\\n15W5z9l0v1hP5xb/fEAwxGxOIk3Lg2c6k78rxcWcGvJDoSU7hPb3U26oha7eFHSRMAYN8gfUxAi6\\r\\nQ2TF4j/arMVBr6Q36EJ2dPcTu0p9NlmBm8dE34lzuTNC6GDCTWFdEloQ9u//M4kUUOjWn8a5XCs1\\r\\n263t3Ta2JfKViqxpP5r+GvgVKG3qGFrC0mIYr0B4tfpeCY9T+cz4I6GDMSP0xg==\"\n    }\n  ]\n}"
 											}
 										},
 										"url": {
@@ -1556,8 +1556,8 @@
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation setLdaps ($input: [LdapInput!]!) {\n    setLdaps (input: $input) {\n        ldaps {\n            name\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n     {\n                \"name\": \"example ldap2\",\n                \"goid\": \"62a6996e5adf7374d43434e9bc080dd0\",\n                \"ldapUrls\": [\n                    \"ldap://ldap.forumsys.com\"\n                ],\n                \"ldapsClientAuthEnabled\": false,\n                \"searchBase\": \"dc=example,dc=com\",\n                \"writable\": false,\n                \"bindDn\": \"cn=read-only-admin,dc=example,dc=com\",\n                \"bindPassword\": \"password\",\n                \"userMappings\": [\n                    {\n                        \"objClass\": \"inetOrgPerson\",\n                        \"nameAttrName\": \"cn\",\n                        \"loginAttrName\": \"uid\",\n                        \"passwdAttrName\": \"userPassword\",\n                        \"firstNameAttrName\": \"givenName\",\n                        \"lastNameAttrName\": \"sn\",\n                        \"emailNameAttrName\": \"mail\",\n                        \"kerberosAttrName\": \"uid\",\n                        \"userCertAttrName\": \"userCertificate;binary\",\n                        \"passwdType\": {\n                            \"val\": 0\n                        }\n                    }\n                ],\n                \"groupMappings\": [\n                    {\n                        \"objClass\": \"posixGroup\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"memberUid\",\n                        \"memberStrategy\": {\n                            \"val\": 1\n                        }\n                    },\n                    {\n                        \"objClass\": \"groupOfUniqueNames\",\n                        \"nameAttrName\": \"cn\",\n                        \"memberAttrName\": \"uniqueMember\",\n                        \"memberStrategy\": {\n                            \"val\": 2\n                        }\n                    },\n                    {\n                        \"objClass\": \"organizationalUnit\",\n                        \"nameAttrName\": \"ou\",\n                        \"memberAttrName\": \"\",\n                        \"memberStrategy\": {\n                            \"val\": 3\n                        }\n                    }\n                ],\n                \"checksum\": \"cf7a2db154a643aae8980570da1289de0e995f56\"\n            }\n  ]\n}"
+												"query": "mutation setLdaps ($ldaps: [LdapInput!]!) {\n    setLdaps (input: $ldaps) {\n        detailedStatus {status description}\n        ldaps {\n            goid\n            name\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"ldaps\": [\n    {\n      \"name\": \"some-ldap\",\n      \"ldapUrls\": [\n        \"ldap://ldap.forumsys.com\"\n      ],\n      \"ldapsClientAuthEnabled\": false,\n      \"searchBase\": \"dc=example,dc=com\",\n      \"writable\": false,\n      \"bindDn\": \"cn=read-only-admin,dc=example,dc=com\",\n      \"bindPassword\": \"JEw3RXYwMiQ8cuJewqLNzu9hRZDqUs0UlBk6nRcOHfaExUCqRsWKTw==\",\n      \"userMappings\": [\n        {\n          \"objClass\": \"inetOrgPerson\",\n          \"nameAttrName\": \"cn\",\n          \"loginAttrName\": \"uid\",\n          \"passwdAttrName\": \"userPassword\",\n          \"firstNameAttrName\": \"givenName\",\n          \"lastNameAttrName\": \"sn\",\n          \"emailNameAttrName\": \"mail\",\n          \"kerberosAttrName\": \"uid\",\n          \"userCertAttrName\": \"userCertificate;binary\",\n          \"passwdType\": {\n            \"val\": 0\n          }\n        }\n      ],\n      \"groupMappings\": [\n        {\n          \"objClass\": \"posixGroup\",\n          \"nameAttrName\": \"cn\",\n          \"memberAttrName\": \"memberUid\",\n          \"memberStrategy\": {\n            \"val\": 1\n          }\n        },\n        {\n          \"objClass\": \"groupOfUniqueNames\",\n          \"nameAttrName\": \"cn\",\n          \"memberAttrName\": \"uniqueMember\",\n          \"memberStrategy\": {\n            \"val\": 2\n          }\n        },\n        {\n          \"objClass\": \"organizationalUnit\",\n          \"nameAttrName\": \"ou\",\n          \"memberAttrName\": \"\",\n          \"memberStrategy\": {\n            \"val\": 3\n          }\n        }\n      ]\n    }\n  ]\n}"
 											}
 										},
 										"url": {
@@ -1570,15 +1570,15 @@
 									"response": []
 								},
 								{
-									"name": "Delete IdP",
+									"name": "Delete IdPs",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation deleteIdp($name: String!) {\n  deleteIdp(name: $name) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"name\": \"example ldap2\"\n}"
+												"query": "mutation deleteIdps($fips: [String!]!, $ldaps: [String!]!) {\n    deleteFips(names: $fips) {\n        detailedStatus {status description}\n        fips {\n            goid\n            name\n        }\n    }\n\n    deleteLdaps(names: $ldaps) {\n        detailedStatus {status description}\n        ldaps {\n            goid\n            name\n        }\n    }\n}",
+												"variables": "{\n    \"fips\": [\"some-fip\"],\n    \"ldaps\": [\"some-ldap\"]\n}"
 											}
 										},
 										"url": {
@@ -1591,15 +1591,15 @@
 									"response": []
 								},
 								{
-									"name": "Set Internal Users",
+									"name": "Set Internal Members",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation setInternalUsers ($input: [InternalUserInput!]!) {\n    setInternalUsers (input: $input) {\n        internalUsers {\n            name\n            memberOf{name}\n            password\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"somebody\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"memberOf\": [\n                    {\n                        \"name\": \"banana_users\"\n                    }\n                ],\n                \"login\": \"banana3\",\n                \"password\": \"$6$H71tKD5zQo01csDP$aBcup/hEjs1FDxRaJZM8POpPBp2Ge.fBd6nX/Uy7kPc4kn26VhpVj2n3ZDNM.lC6fTcr2NYO36orNoNKW7Gzx0\",\n                \"certBase64\": \"MIIGjDCCBXSgAwIBAgIJAOfLGfa8uS2BMA0GCSqGSIb3DQEBCwUAMIG0MQswCQYDVQQGEwJVUzEQ\\r\\nMA4GA1UECBMHQXJpem9uYTETMBEGA1UEBxMKU2NvdHRzZGFsZTEaMBgGA1UEChMRR29EYWRkeS5j\\r\\nb20sIEluYy4xLTArBgNVBAsTJGh0dHA6Ly9jZXJ0cy5nb2RhZGR5LmNvbS9yZXBvc2l0b3J5LzEz\\r\\nMDEGA1UEAxMqR28gRGFkZHkgU2VjdXJlIENlcnRpZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTIy\\r\\nMDMxNDE3NDkyM1oXDTIzMDQxNTE1Mzg0MVowFzEVMBMGA1UEAwwMKi5rZWxvd25hLmNhMIIBIjAN\\r\\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QCY48mBJfLCIuyJIQTwF5gikuf5B/FoGZ3LcAtv\\r\\nE9tagkS+0qDsMorwFYT93tnJFusmIVqoGUbVx7IRIWYQIzZsPUBLUEqoBYoyZJwYfsuX2XVP5XxC\\r\\noKuMQdNw/G32e2lbpcnYQ27svQ8jq9Hx+PcCxywgi8ar/jC3Bm/+NSl5IM63iiV2VFdrE74a9fmp\\r\\nN40W9uDl4du4N6PwMxc8cihn8ymiOcwFUC7R/6+4sIBFuddAMZ1J8FrOO+RSdflbOQvJYZDzFK00\\r\\n9VOC6PlxcK0IRKA450Qd3mzdHSJdLuPu38AuW394tvS9/M3ZlWQuZvqLCYIx/xpTWD7qWQ8H8QID\\r\\nAQABo4IDOzCCAzcwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw\\r\\nDgYDVR0PAQH/BAQDAgWgMDgGA1UdHwQxMC8wLaAroCmGJ2h0dHA6Ly9jcmwuZ29kYWRkeS5jb20v\\r\\nZ2RpZzJzMS0zOTIxLmNybDBdBgNVHSAEVjBUMEgGC2CGSAGG/W0BBxcBMDkwNwYIKwYBBQUHAgEW\\r\\nK2h0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5jb20vcmVwb3NpdG9yeS8wCAYGZ4EMAQIBMHYG\\r\\nCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZ29kYWRkeS5jb20vMEAGCCsG\\r\\nAQUFBzAChjRodHRwOi8vY2VydGlmaWNhdGVzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkvZ2RpZzIu\\r\\nY3J0MB8GA1UdIwQYMBaAFEDCvSeOzDSDMKIz1/tss/C0LIDOMCMGA1UdEQQcMBqCDCoua2Vsb3du\\r\\nYS5jYYIKa2Vsb3duYS5jYTAdBgNVHQ4EFgQUEF5c8gyemT/aYylYsq2gimJumOowggGABgorBgEE\\r\\nAdZ5AgQCBIIBcASCAWwBagB3AOg+0No+9QY1MudXKLyJa8kD08vREWvs62nhd31tBr1uAAABf4mM\\r\\njjMAAAQDAEgwRgIhAN+bVp1Nf4tRQ7QkUNdB3XfvN5+5zA5SeJRJRvgkN1H3AiEAwBToqUD09ySi\\r\\nMKGyNCA+gU4VpeQKEQ71YXgEQowOhdEAdwA1zxkbv7FsV78PrUxtQsu7ticgJlHqP+Eq76gDwzvW\\r\\nTAAAAX+JjI9wAAAEAwBIMEYCIQD6ZBKhSjV2bC9QBcbwdKOEHRv2wX/e61MXvLN3ePBIjgIhAP87\\r\\nK4nObHAQgrZ0RPV6ji61EHzWt0Pwjwh287Ms0zECAHYAejKMVNi3LbYg6jjgUh7phBZwMhOFTTvS\\r\\nK8E6V6NS61IAAAF/iYyP0AAABAMARzBFAiEAtgcQJurJ3g8LdvNv2juOZ3U0tyX11iNPhJ4kPsCR\\r\\niosCIEDQrcucbYu2EIlXjUecYcnrUFO7TyvBEaMh3z4//SOKMA0GCSqGSIb3DQEBCwUAA4IBAQAT\\r\\nINkwgzr+oJJAjtUxNDPn7SUuxFdiOQrmnG7/7ZDMeGQ02SLiA+ukDzXXVqOQSlrX7I306xfqou3m\\r\\nNBSbyob53W46yq9hwqYS7PjFMjinyyG3aDX6mdOPtngtO8xfslkIBaSao5EDJC5HpA0KMPAc2xW7\\r\\nlmA/bluIS7a+U0Tbvv7uaZajTRV7KlT+7N2PpNUuMr0ilvB8wZjhJHZtNU2DTvotCPCdNaxTKLLT\\r\\nZc1at2Vc8Z10VrDvGK4JnHEAS6amNWoFPEdjzpbtVVV8F7xl8bJfKE4SwrBzZn8Aq5BcIxMhL5eq\\r\\nmS1dUj/x/4GUETE7ojJYYTE/4XVNzOxjmJc0\"\n            }\n  ]\n}"
+												"query": "mutation setInternalMembers (\n    $internalUsers: [InternalUserInput!]!,\n    $internalGroups: [InternalGroupInput!]!) {\n\n    setInternalGroups (input: $internalGroups) {\n        internalGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n\n    setInternalUsers (input: $internalUsers) {\n        internalUsers {\n            name\n            memberOf{name}\n            password\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"internalUsers\": [\n    {\n        \"name\": \"some-internal-user\",\n        \"memberOf\": [\n            {\n                \"name\": \"some-internal-group\"\n            }\n        ],\n        \"login\": \"some-internal-user\",\n        \"password\": \"$6$H71tKD5zQo01csDP$aBcup/hEjs1FDxRaJZM8POpPBp2Ge.fBd6nX/Uy7kPc4kn26VhpVj2n3ZDNM.lC6fTcr2NYO36orNoNKW7Gzx0\",\n        \"certBase64\": \"MIIGjDCCBXSgAwIBAgIJAOfLGfa8uS2BMA0GCSqGSIb3DQEBCwUAMIG0MQswCQYDVQQGEwJVUzEQ\\r\\nMA4GA1UECBMHQXJpem9uYTETMBEGA1UEBxMKU2NvdHRzZGFsZTEaMBgGA1UEChMRR29EYWRkeS5j\\r\\nb20sIEluYy4xLTArBgNVBAsTJGh0dHA6Ly9jZXJ0cy5nb2RhZGR5LmNvbS9yZXBvc2l0b3J5LzEz\\r\\nMDEGA1UEAxMqR28gRGFkZHkgU2VjdXJlIENlcnRpZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTIy\\r\\nMDMxNDE3NDkyM1oXDTIzMDQxNTE1Mzg0MVowFzEVMBMGA1UEAwwMKi5rZWxvd25hLmNhMIIBIjAN\\r\\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QCY48mBJfLCIuyJIQTwF5gikuf5B/FoGZ3LcAtv\\r\\nE9tagkS+0qDsMorwFYT93tnJFusmIVqoGUbVx7IRIWYQIzZsPUBLUEqoBYoyZJwYfsuX2XVP5XxC\\r\\noKuMQdNw/G32e2lbpcnYQ27svQ8jq9Hx+PcCxywgi8ar/jC3Bm/+NSl5IM63iiV2VFdrE74a9fmp\\r\\nN40W9uDl4du4N6PwMxc8cihn8ymiOcwFUC7R/6+4sIBFuddAMZ1J8FrOO+RSdflbOQvJYZDzFK00\\r\\n9VOC6PlxcK0IRKA450Qd3mzdHSJdLuPu38AuW394tvS9/M3ZlWQuZvqLCYIx/xpTWD7qWQ8H8QID\\r\\nAQABo4IDOzCCAzcwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw\\r\\nDgYDVR0PAQH/BAQDAgWgMDgGA1UdHwQxMC8wLaAroCmGJ2h0dHA6Ly9jcmwuZ29kYWRkeS5jb20v\\r\\nZ2RpZzJzMS0zOTIxLmNybDBdBgNVHSAEVjBUMEgGC2CGSAGG/W0BBxcBMDkwNwYIKwYBBQUHAgEW\\r\\nK2h0dHA6Ly9jZXJ0aWZpY2F0ZXMuZ29kYWRkeS5jb20vcmVwb3NpdG9yeS8wCAYGZ4EMAQIBMHYG\\r\\nCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZ29kYWRkeS5jb20vMEAGCCsG\\r\\nAQUFBzAChjRodHRwOi8vY2VydGlmaWNhdGVzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkvZ2RpZzIu\\r\\nY3J0MB8GA1UdIwQYMBaAFEDCvSeOzDSDMKIz1/tss/C0LIDOMCMGA1UdEQQcMBqCDCoua2Vsb3du\\r\\nYS5jYYIKa2Vsb3duYS5jYTAdBgNVHQ4EFgQUEF5c8gyemT/aYylYsq2gimJumOowggGABgorBgEE\\r\\nAdZ5AgQCBIIBcASCAWwBagB3AOg+0No+9QY1MudXKLyJa8kD08vREWvs62nhd31tBr1uAAABf4mM\\r\\njjMAAAQDAEgwRgIhAN+bVp1Nf4tRQ7QkUNdB3XfvN5+5zA5SeJRJRvgkN1H3AiEAwBToqUD09ySi\\r\\nMKGyNCA+gU4VpeQKEQ71YXgEQowOhdEAdwA1zxkbv7FsV78PrUxtQsu7ticgJlHqP+Eq76gDwzvW\\r\\nTAAAAX+JjI9wAAAEAwBIMEYCIQD6ZBKhSjV2bC9QBcbwdKOEHRv2wX/e61MXvLN3ePBIjgIhAP87\\r\\nK4nObHAQgrZ0RPV6ji61EHzWt0Pwjwh287Ms0zECAHYAejKMVNi3LbYg6jjgUh7phBZwMhOFTTvS\\r\\nK8E6V6NS61IAAAF/iYyP0AAABAMARzBFAiEAtgcQJurJ3g8LdvNv2juOZ3U0tyX11iNPhJ4kPsCR\\r\\niosCIEDQrcucbYu2EIlXjUecYcnrUFO7TyvBEaMh3z4//SOKMA0GCSqGSIb3DQEBCwUAA4IBAQAT\\r\\nINkwgzr+oJJAjtUxNDPn7SUuxFdiOQrmnG7/7ZDMeGQ02SLiA+ukDzXXVqOQSlrX7I306xfqou3m\\r\\nNBSbyob53W46yq9hwqYS7PjFMjinyyG3aDX6mdOPtngtO8xfslkIBaSao5EDJC5HpA0KMPAc2xW7\\r\\nlmA/bluIS7a+U0Tbvv7uaZajTRV7KlT+7N2PpNUuMr0ilvB8wZjhJHZtNU2DTvotCPCdNaxTKLLT\\r\\nZc1at2Vc8Z10VrDvGK4JnHEAS6amNWoFPEdjzpbtVVV8F7xl8bJfKE4SwrBzZn8Aq5BcIxMhL5eq\\r\\nmS1dUj/x/4GUETE7ojJYYTE/4XVNzOxjmJc0\"\n    }\n  ],\n\n  \"internalGroups\": [\n    {\n        \"name\": \"some-internal-group\",\n        \"description\": \"some internal group\"\n    }\n  ]\n}"
 											}
 										},
 										"url": {
@@ -1612,15 +1612,15 @@
 									"response": []
 								},
 								{
-									"name": "Set Internal Groups",
+									"name": "Delete Internal Members",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation setInternalGroups ($input: [InternalGroupInput!]!) {\n    setInternalGroups (input: $input) {\n        internalGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"banana_users\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for  banana_users\"\n            }\n  ]\n}"
+												"query": "mutation deleteInternalMembers(\n    $internalUsers: [String!]!,\n    $internalGroups: [String!]!) {\n  deleteInternalUsers(logins: $internalUsers) {\n    detailedStatus {status description}\n    internalUsers {\n        goid\n        name\n        login\n    }\n  }\n\n  deleteInternalGroups(names: $internalGroups) {\n    detailedStatus {status description}\n    internalGroups {\n        goid\n        name\n    }\n  }\n}\n",
+												"variables": "{\n    \"internalUsers\": [\"some-internal-user\"],\n    \"internalGroups\": [\"some-internal-group\"]\n}"
 											}
 										},
 										"url": {
@@ -1633,15 +1633,15 @@
 									"response": []
 								},
 								{
-									"name": "Delete Internal User",
+									"name": "Set Fip Members",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation deleteInternalUser($login: String!) {\n  deleteInternalUser(login: $login) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"login\": \"banana3\"\n}"
+												"query": "mutation setFipMembers (\n    $fipUsers: [FipUserInput!]!, \n    $fipGroups: [FipGroupInput!]!) {\n    setFipGroups (input: $fipGroups) {\n        detailedStatus {status description}\n        fipGroups {\n            goid\n            name\n            providerName\n            checksum\n        }\n    }\n\n    setFipUsers (input: $fipUsers) {\n        detailedStatus {status description}\n        fipUsers {\n            goid\n            name\n            login\n            providerName\n            checksum\n        }\n    }\n}",
+												"variables": "{\n  \"fipUsers\": [\n    {\n        \"name\": \"some-fip-user\",\n        \"login\": \"some-fip-user\",\n        \"providerName\": \"some-fip\",\n        \"email\": \"some-fip-user@some.fip\",\n        \"memberOf\": [{\n            \"name\": \"some-fip-group\"\n        }],\n        \"subjectDn\": \"cn=some-fip-user\"\n    }\n  ],\n\n  \"fipGroups\": [\n    {\n        \"name\": \"some-fip-group\",\n        \"providerName\": \"some-fip\",\n        \"description\": \"some fip group\"\n    }\n  ]\n}"
 											}
 										},
 										"url": {
@@ -1654,99 +1654,15 @@
 									"response": []
 								},
 								{
-									"name": "Delete Internal Group",
+									"name": "Delete Fip Members",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "mutation deleteInternalGroup($name: String!) {\n  deleteInternalGroup(name: $name) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"name\": \"TestGroupFoo\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Fip Users",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setFipUsers ($input: [FipUserInput!]!) {\n    setFipUsers (input: $input) {\n        detailedStatus{status description}\n        fipUsers {\n            name\n            providerName\n            memberOf{name}\n            checksum\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"Johnny\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"23654d13f7591e1427612fdd991adc37a1faa4bf\",\n                \"email\": \"johnny@dirt.com\",\n                \"memberOf\": [{\n                    \"name\": \"group1\"\n                }],\n                \"subjectDn\": \"cn=john\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Fip User",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteFipUser($fipName: String!, $userName: String!) {\n  deleteFipUser(fipName: $fipName, userName: $userName) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"userName\": \"Johnny\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Set Fip Groups",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation setFipGroups ($input: [FipGroupInput!]!) {\n    setFipGroups (input: $input) {\n        detailedStatus{status description}\n        fipGroups {\n            name\n            checksum\n            members {\n                name\n            }\n        }\n    }\n}",
-												"variables": "{\n  \"input\": [\n      {\n                \"name\": \"group 1\",\n                \"providerName\": \"fip test 2\",\n                \"checksum\": \"8fe57dbbe1787878be0cf02d3a0ecdbc413ef021\",\n                \"description\": \"Description for Test Foo\"\n            }\n  ]\n}"
-											}
-										},
-										"url": {
-											"raw": "{{target_gw}}",
-											"host": [
-												"{{target_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Delete Fip Group",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "mutation deleteFipGroup($fipName: String!, $groupName: String!) {\n  deleteFipGroup(fipName: $fipName, groupName: $groupName) {\n    deleted\n  }\n}",
-												"variables": "{\n    \"fipName\" : \"Foo\",\n    \"groupName\": \"TestGroupFoo\"\n}"
+												"query": "mutation deleteFipMembers(\n    $providerName: String!, \n    $fipUsers: [String!]!,\n    $fipGroups: [String!]!) {\n\n    deleteFipUsers(providerName: $providerName, names: $fipUsers) {\n        detailedStatus {status description}\n        fipUsers {\n            goid\n            name\n            providerName\n        }\n    }\n\n    deleteFipGroups(providerName: $providerName, names: $fipGroups) {\n        detailedStatus {status description}\n        fipGroups {\n            goid\n            name\n            providerName\n        }\n    }\n}",
+												"variables": "{\n    \"providerName\": \"some-fip\",\n    \"fipUsers\": [\"some-fip-user\"],\n    \"fipGroups\": [\"some-fip-group\"]\n}\n"
 											}
 										},
 										"url": {
@@ -1764,15 +1680,15 @@
 							"name": "Queries",
 							"item": [
 								{
-									"name": "Search",
+									"name": "Fips",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query searchIdp ($filter : IdpFilter!) {\n    searchIdp (filter : $filter) {\n        internalUsers {\n            name\n            goid\n        }\n        internalGroups {\n            name\n            goid\n        }\n        fipUsers {\n            name\n        }\n        fipGroups {\n            name\n        }\n    }\n}",
-												"variables": "{\n    \"filter\" : {\n        \"providerName\": \"Internal idp\",\n        \"namePattern\" : \"abc*\"\n    }\n}"
+												"query": "query fips {\n    fips {\n        goid \n        name \n        checksum \n        \n        enableCredentialTypeSaml \n        enableCredentialTypeX509 \n        certificateValidation \n        certificateReferences { \n            goid \n            name \n            subjectDn \n            thumbprintSha1 \n            checksum \n            \n            verifyHostname \n            trustAnchor \n            trustedFor \n            revocationCheckPolicyType \n            revocationCheckPolicy { goid name } \n            notBefore \n            notAfter \n            certBase64 \n        }\n    }\n}",
+												"variables": "{}"
 											}
 										},
 										"url": {
@@ -1785,14 +1701,35 @@
 									"response": []
 								},
 								{
-									"name": "All users and groups",
+									"name": "Fip By Name",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query everyIdentities {\n    internalUsers {\n        name\n        memberOf {\n            name\n            description\n        }\n        login\n        password\n        firstName\n        lastName\n        email\n        certBase64\n        enabled\n    }\n    fipUsers {\n        name\n        subjectDn\n        memberOf {\n            name\n            description\n        }\n        login\n        firstName\n        lastName\n        email\n        certBase64\n    }\n    internalGroups {\n        name\n        goid\n        description\n        members {\n            name\n        }\n    }\n    fipGroups {\n        name\n        goid\n        description\n        members {\n            name\n        }\n    }\n}",
+												"query": "query fipByName($name: String!) {\n    fipByName(name : $name) {\n        goid \n        name \n        checksum \n        \n        enableCredentialTypeSaml \n        enableCredentialTypeX509 \n        certificateValidation \n        certificateReferences { \n            goid \n            name \n            subjectDn \n            thumbprintSha1 \n            checksum \n            \n            verifyHostname \n            trustAnchor \n            trustedFor \n            revocationCheckPolicyType \n            revocationCheckPolicy { goid name } \n            notBefore \n            notAfter \n            certBase64 \n        }\n    }\n}",
+												"variables": "{\n    \"name\" : \"some-fip\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{source_gw}}",
+											"host": [
+												"{{source_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Ldaps",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "query ldaps {\n    ldaps {\n        goid \n        name \n        checksum \n\n        ldapUrls \n        ldapsClientAuthEnabled \n        ldapsClientKeystoreId \n        ldapsClientKeyAlias \n        searchBase \n        writable \n        bindDn \n        bindPassword \n\n        userMappings { \n            objClass \n            nameAttrName \n            loginAttrName \n            passwdAttrName \n            firstNameAttrName \n            lastNameAttrName \n            emailNameAttrName \n            kerberosAttrName \n            kerberosEnterpriseAttrName \n            userCertAttrName \n            passwdType { val } \n        } \n            \n        groupMappings { \n            objClass \n            nameAttrName \n            memberAttrName \n            memberStrategy { val } \n        }\n    }\n}",
 												"variables": "{}"
 											}
 										},
@@ -1801,20 +1738,61 @@
 											"host": [
 												"{{source_gw}}"
 											]
-										},
-										"description": "# All users and groups\n\nGet all combined users and groups from fips and internal."
+										}
 									},
 									"response": []
 								},
 								{
-									"name": "Internal Users",
+									"name": "Ldap By Name",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query internalUsers {\n    internalUsers {\n        name\n        goid\n        checksum\n        memberOf {\n            name\n        }\n        login\n        password\n        firstName\n        lastName\n        email\n        certBase64\n    }\n}",
+												"query": "query ldapByName($name : String!) {\n    ldapByName(name : $name) {\n        goid \n        name \n        checksum \n\n        ldapUrls \n        ldapsClientAuthEnabled \n        ldapsClientKeystoreId \n        ldapsClientKeyAlias \n        searchBase \n        writable \n        bindDn \n        bindPassword \n\n        userMappings { \n            objClass \n            nameAttrName \n            loginAttrName \n            passwdAttrName \n            firstNameAttrName \n            lastNameAttrName \n            emailNameAttrName \n            kerberosAttrName \n            kerberosEnterpriseAttrName \n            userCertAttrName \n            passwdType { val } \n        } \n            \n        groupMappings { \n            objClass \n            nameAttrName \n            memberAttrName \n            memberStrategy { val } \n        }\n    }\n}",
+												"variables": "{\n    \"name\" : \"some-ldap\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{source_gw}}",
+											"host": [
+												"{{source_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search IdP",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "query searchIdp ($internalFilter: IdpFilter!, $fipFilter: IdpFilter!) {\n    searchInternal (filter : $internalFilter) {\n        internalUsers {\n            goid\n            name\n            login\n            checksum\n        }\n        \n        internalGroups {\n            goid\n            name\n            checksum\n        }\n    }\n\n    searchFip (filter: $fipFilter) {\n        fipUsers {\n            goid\n            name\n            login\n            providerName\n            checksum\n        }\n\n        fipGroups {\n            goid\n            name\n            providerName\n            checksum\n        }\n    }\n}",
+												"variables": "{\n    \"internalFilter\": {\n        \"providerName\": \"Internal Identity\",\n        \"namePattern\" : \"some*\"\n    },\n\n    \"fipFilter\" : {\n        \"providerName\": \"some-fip\",\n        \"namePattern\" : \"some*\"\n    }\n}"
+											}
+										},
+										"url": {
+											"raw": "{{source_gw}}",
+											"host": [
+												"{{source_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Internal Members",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "query internalUsers {\n    internalUsers {\n        goid \n        name \n        login \n        checksum \n        \n        enabled \n        password \n        certBase64 \n        firstName \n        lastName \n        email\n\n        memberOf {\n            name\n        }\n    }\n\n    internalGroups {\n        goid \n        name \n        checksum \n        description\n\n        members {\n            name\n        }\n    }\n}",
 												"variables": "{}"
 											}
 										},
@@ -1836,8 +1814,8 @@
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query internalUserByLogin ($login: String!) {\n    internalUserByLogin(login : $login) {\n        name\n        goid\n        checksum\n        memberOf {\n            name\n        }\n        login\n        password\n        firstName\n        lastName\n        email\n        certBase64\n    }\n}",
-												"variables": "{\n    \"login\" : \"abcdefg\"\n}"
+												"query": "query internalUserByLogin ($login: String!) {\n    internalUserByLogin(login : $login) {\n        goid \n        name \n        login \n        checksum \n        \n        enabled \n        password \n        certBase64 \n        firstName \n        lastName \n        email\n\n        memberOf {\n            name\n        }\n    }\n}",
+												"variables": "{\n    \"login\" : \"some-internal-user\"\n}"
 											}
 										},
 										"url": {
@@ -1851,14 +1829,35 @@
 									"response": []
 								},
 								{
-									"name": "Fip Users",
+									"name": "Internal Group By Name",
 									"request": {
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query fipUsers {\n    fipUsers {\n        name\n        providerName\n        checksum\n        subjectDn\n        memberOf {\n            name\n            description\n        }\n        login\n        firstName\n        lastName\n        email\n        certBase64\n    }\n}",
+												"query": "query internalGroupByName($name: String!) {\n    internalGroupByName(name : $name) {\n        goid\n        name\n        checksum\n        description\n\n        members {name}\n    }\n}",
+												"variables": "{\n    \"name\" : \"some-internal-group\"\n}"
+											}
+										},
+										"url": {
+											"raw": "{{source_gw}}",
+											"host": [
+												"{{source_gw}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Fip Members",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "query fipUsers {\n    fipUsers {\n        goid\n        name\n        login\n        providerName\n        checksum\n\n        subjectDn \n        certBase64 \n        firstName \n        lastName \n        email\n\n        memberOf {\n            name\n        }\n    }\n\n    fipGroups {\n        goid \n        name \n        providerName \n        checksum \n        \n        description\n        members { name }\n    }\n}",
 												"variables": "{}"
 											}
 										},
@@ -1879,71 +1878,8 @@
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query fipUserByName($providerName: String!, $userName: String!) {\n    fipUserByName (providerName: $providerName, userName : $userName){\n        name\n        goid\n        providerName\n        checksum\n        subjectDn\n        memberOf {\n            name\n        }\n        login\n        firstName\n        lastName\n        email\n        certBase64\n    }\n}",
-												"variables": "{\n    \"providerName\" : \"Foo\",\n    \"userName\" : \"user1\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Internal Groups",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query internalGroups {\n    internalGroups {\n        name\n        checksum\n        goid\n        description\n        members {\n            name\n        }\n    }\n}",
-												"variables": "{}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Internal Group By Name",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query internalGroupByName($name: String!) {\n    internalGroupByName(name : $name) {\n        name\n        checksum\n        goid\n        description\n    }\n}",
-												"variables": "{\n    \"name\" : \"banana_users\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Fip Groups",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query fipGroups {\n    fipGroups {\n        name\n        checksum\n        goid\n        description\n        members {\n            name\n        }\n    }\n}",
-												"variables": "{}"
+												"query": "query fipUserByName($providerName: String!, $name: String!) {\n    fipUserByName (providerName: $providerName, name : $name){\n        goid\n        name\n        login\n        providerName\n        checksum\n\n        subjectDn \n        certBase64 \n        firstName \n        lastName \n        email\n\n        memberOf {\n            name\n        }\n    }\n}",
+												"variables": "{\n    \"providerName\" : \"some-fip\",\n    \"name\" : \"some-fip-user\"\n}"
 											}
 										},
 										"url": {
@@ -1963,113 +1899,8 @@
 										"body": {
 											"mode": "graphql",
 											"graphql": {
-												"query": "query fipGroupByName($providerName: String!, $groupName: String!) {\n    fipGroupByName(providerName: $providerName, groupName : $groupName) {\n        name\n        checksum\n        goid\n        description\n    }\n}",
-												"variables": "{\n    \"providerName\": \"Foo\",\n    \"groupName\": \"fipgroup\"\n    \n}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Fips",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query fips {\n    fips {\n        name\n        checksum\n        goid\n        enableCredentialTypeX509\n        enableCredentialTypeSaml\n        certificateReferences {\n            thumbprintSha1\n        }\n    }\n}",
-												"variables": "{}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Fip By Name",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query fipByName($name: String!) {\n    fipByName(name : $name) {\n        name\n        checksum\n        goid\n        enableCredentialTypeX509\n        enableCredentialTypeSaml\n        certificateReferences {\n            thumbprintSha1\n        }\n    }\n}",
-												"variables": "{\n    \"name\" : \"Foo\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Ldap Idps",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query ldaps {\n    ldaps {\n        name\n        goid\n        ldapUrls\n        ldapsClientAuthEnabled\n        ldapsClientKeyAlias\n        searchBase\n        writable\n        bindDn\n        bindPassword\n        userMappings {\n            objClass\n            nameAttrName\n            loginAttrName\n            passwdAttrName\n            firstNameAttrName\n            lastNameAttrName\n            emailNameAttrName\n            kerberosAttrName\n            kerberosEnterpriseAttrName\n            userCertAttrName\n            passwdType {\n                val\n            }\n        }\n        groupMappings {\n            objClass\n            nameAttrName\n            memberAttrName\n            memberStrategy {\n                val\n            }\n        }\n        checksum\n    }\n}",
-												"variables": "{}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Ldap Idp By Name",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query ldapByName($name : String!) {\n    ldapByName(name : $name) {\n        name\n        goid\n        checksum\n        ldapUrls\n        ldapsClientAuthEnabled\n        ldapsClientKeyAlias\n        searchBase\n        writable\n        bindDn\n        bindPassword\n        userMappings {\n            objClass\n            nameAttrName\n            loginAttrName\n            passwdAttrName\n            firstNameAttrName\n            lastNameAttrName\n            emailNameAttrName\n            kerberosAttrName\n            kerberosEnterpriseAttrName\n            userCertAttrName\n            passwdType {\n                val\n            }\n        }\n        groupMappings {\n            objClass\n            nameAttrName\n            memberAttrName\n            memberStrategy {\n                val\n            }\n        }\n    }\n}",
-												"variables": "{\n    \"name\" : \"example ldap\"\n}"
-											}
-										},
-										"url": {
-											"raw": "{{source_gw}}",
-											"host": [
-												"{{source_gw}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Api dependencies",
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "graphql",
-											"graphql": {
-												"query": "query webApiServicesByName ($name: String!) {\n    webApiServicesByName (name: $name) {\n        name\n        resolutionPath\n        folderPath\n        policy {\n            allDependencies {\n                fips {\n                    name\n                    checksum\n                    goid\n                    enableCredentialTypeX509\n                    enableCredentialTypeSaml\n                    certificateReferences {\n                        thumbprintSha1\n                    }\n                }\n                ldaps {\n                    name\n                    goid\n                    ldapUrls\n                    ldapsClientAuthEnabled\n                    ldapsClientKeyAlias\n                    searchBase\n                    writable\n                    bindDn\n                    bindPassword\n                    userMappings {\n                        objClass\n                        nameAttrName\n                        loginAttrName\n                        passwdAttrName\n                        firstNameAttrName\n                        lastNameAttrName\n                        emailNameAttrName\n                        kerberosAttrName\n                        kerberosEnterpriseAttrName\n                        userCertAttrName\n                        passwdType {\n                            val\n                        }\n                    }\n                    groupMappings {\n                        objClass\n                        nameAttrName\n                        memberAttrName\n                        memberStrategy {\n                            val\n                        }\n                    }\n                    checksum\n                }\n                internalGroups {\n                    name\n                    checksum\n                    goid\n                    description\n                }\n                fipGroups {\n                    name\n                    checksum\n                    goid\n                    description\n                }\n                internalUsers {\n                    name\n                    goid\n                    checksum\n                    memberOf {\n                        name\n                    }\n                    login\n                    password\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                fipUsers {\n                    name\n                    providerName\n                    checksum\n                    subjectDn\n                    memberOf {\n                        name\n                    }\n                    login\n                    firstName\n                    lastName\n                    email\n                    certBase64\n                }\n                trustedCerts {\n                    name\n                    certBase64\n                    verifyHostname\n                    trustAnchor\n                    trustedFor\n                    revocationCheckPolicyType\n                }\n                \n              policyFragments {\n                    name\n                    folderPath\n                    guid\n                    policy {\n                        xml\n                    }\n                }\n                encassConfigs {\n                    name\n                    policyName\n                    guid\n                    encassArgs {\n                        name\n                        type\n                        ordinal\n                        guiLabel\n                        guiPrompt\n                    }\n                    encassResults {\n                        name\n                        type\n                    }\n                }\n                clusterProperties {\n                    name\n                    value\n                }\n                jdbcConnections {\n                    name\n                    driverClass\n                    jdbcUrl\n                    enabled\n                    username\n                    password\n                    minPoolSize\n                    maxPoolSize\n                    properties {\n                        name\n                        value\n                    }\n                }\n                schemas {\n                    systemId\n                    targetNs\n                    description\n                    xml\n                }\n                dtds {\n                    systemId\n                    publicId\n                    description\n                    definition\n                }\n            }\n        }\n        goid\n        enabled\n        methodsAllowed\n        checksum\n    }\n}",
-												"variables": "{\n    \"name\": \"ServiceWithIds\"\n}"
+												"query": "query fipGroupByName($providerName: String!, $name: String!) {\n    fipGroupByName(providerName: $providerName, name : $name) {\n        goid\n        name\n        providerName\n        checksum\n\n        description\n        members { name }\n    }\n}",
+												"variables": "{\n    \"providerName\": \"some-fip\",\n    \"name\": \"some-fip-group\"\n    \n}"
 											}
 										},
 										"url": {
