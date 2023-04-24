@@ -1,0 +1,15 @@
+{
+  "webApiServices": [
+    {
+      "name": "hi",
+      "resolutionPath": "/hi",
+      "checksum": "ebc5d01f10fe3d0a3cb017b818fe82f404d0e368"
+    }
+  ],
+  "clusterProperties": [
+    {
+      "name": "greetings",
+      "checksum": "52c966172677c386a1ab81a84e3cb0486c7db1f4"
+    }
+  ]
+}
